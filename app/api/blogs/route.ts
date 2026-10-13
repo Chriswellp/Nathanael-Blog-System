@@ -1,20 +1,37 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// Enforce dynamic execution for Next.js build optimization
+export const dynamic = 'force-dynamic';
 
+// Helper function to lazily initialize Supabase Client per request
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    '';
 
-// Initialize Supabase Client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+  if (!supabaseUrl || !supabaseKey) {
+    return null;
+  }
 
-
+  return createClient(supabaseUrl, supabaseKey);
+}
 
 // ----------------------------------------------------------------------
 // 1. GET: Fetch all blog entries (Including hidden ones for Admin view)
 // ----------------------------------------------------------------------
 export async function GET(req: Request) {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase credentials are missing.' },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const includeHidden = searchParams.get('includeHidden') === 'true';
 
@@ -23,7 +40,7 @@ export async function GET(req: Request) {
       .select('*')
       .order('created_at', { ascending: false });
 
-    // 👈 Only return visible blogs for public users
+    // Only return visible blogs for public users
     if (!includeHidden) {
       query = query.eq('is_visible', true);
     }
@@ -37,14 +54,26 @@ export async function GET(req: Request) {
 
     return NextResponse.json(data || []);
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
+
 // ----------------------------------------------------------------------
 // 2. POST: Insert new blog post (Handles JSON and multipart/form-data)
 // ----------------------------------------------------------------------
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase credentials are missing.' },
+        { status: 500 }
+      );
+    }
+
     const contentType = request.headers.get('content-type') || '';
 
     let title: string = '';
@@ -64,7 +93,7 @@ export async function POST(request: Request) {
       type = (formData.get('type') as string) || 'article';
       snippet = (formData.get('snippet') as string) || '';
       content = (formData.get('content') as string) || '';
-      isVisible = formData.get('isVisible') !== 'false'; // defaults to true unless explicitly 'false'
+      isVisible = formData.get('isVisible') !== 'false';
 
       const videoFile = formData.get('videoFile') as File | null;
 
@@ -145,7 +174,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Blog created successfully', data: data[0] }, { status: 201 });
+    return NextResponse.json(
+      { message: 'Blog created successfully', data: data[0] },
+      { status: 201 }
+    );
   } catch (err: any) {
     console.error('Server POST Error:', err);
     return NextResponse.json(
@@ -160,6 +192,14 @@ export async function POST(request: Request) {
 // ----------------------------------------------------------------------
 export async function PUT(request: Request) {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase credentials are missing.' },
+        { status: 500 }
+      );
+    }
+
     const contentType = request.headers.get('content-type') || '';
     let id: string = '';
     let updateFields: Record<string, any> = {};
@@ -173,7 +213,8 @@ export async function PUT(request: Request) {
       if (formData.has('type')) updateFields.type = formData.get('type');
       if (formData.has('snippet')) updateFields.snippet = formData.get('snippet');
       if (formData.has('content')) updateFields.content = formData.get('content');
-      if (formData.has('isVisible')) updateFields.is_visible = formData.get('isVisible') === 'true';
+      if (formData.has('isVisible'))
+        updateFields.is_visible = formData.get('isVisible') === 'true';
 
       const videoFile = formData.get('videoFile') as File | null;
       if (videoFile && videoFile.size > 0) {
@@ -190,10 +231,15 @@ export async function PUT(request: Request) {
           });
 
         if (uploadError) {
-          return NextResponse.json({ error: `Video upload failed: ${uploadError.message}` }, { status: 500 });
+          return NextResponse.json(
+            { error: `Video upload failed: ${uploadError.message}` },
+            { status: 500 }
+          );
         }
 
-        const { data: publicUrlData } = supabase.storage.from('blog-videos').getPublicUrl(uploadData.path);
+        const { data: publicUrlData } = supabase.storage
+          .from('blog-videos')
+          .getPublicUrl(uploadData.path);
         updateFields.video_embed_url = publicUrlData.publicUrl;
       }
     } else {
@@ -205,11 +251,15 @@ export async function PUT(request: Request) {
       if (body.snippet !== undefined) updateFields.snippet = body.snippet;
       if (body.content !== undefined) updateFields.content = body.content;
       if (body.isVisible !== undefined) updateFields.is_visible = body.isVisible;
-      if (body.videoEmbedUrl !== undefined) updateFields.video_embed_url = body.videoEmbedUrl;
+      if (body.videoEmbedUrl !== undefined)
+        updateFields.video_embed_url = body.videoEmbedUrl;
     }
 
     if (!id) {
-      return NextResponse.json({ error: 'Blog ID is required for updating.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Blog ID is required for updating.' },
+        { status: 400 }
+      );
     }
 
     const { data, error } = await supabase
@@ -223,10 +273,16 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Blog updated successfully', data: data[0] }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Blog updated successfully', data: data[0] },
+      { status: 200 }
+    );
   } catch (err: any) {
     console.error('Server PUT Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -235,14 +291,26 @@ export async function PUT(request: Request) {
 // ----------------------------------------------------------------------
 export async function PATCH(request: Request) {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase credentials are missing.' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const id = body.id;
-    
+
     // Fallback: accept either camelCase or snake_case from the request payload
-    const isVisible = body.isVisible !== undefined ? body.isVisible : body.is_visible;
+    const isVisible =
+      body.isVisible !== undefined ? body.isVisible : body.is_visible;
 
     if (!id || isVisible === undefined) {
-      return NextResponse.json({ error: 'ID and visibility parameters are required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'ID and visibility parameters are required.' },
+        { status: 400 }
+      );
     }
 
     const { data, error } = await supabase
@@ -256,10 +324,16 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Visibility updated successfully', data: data[0] }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Visibility updated successfully', data: data[0] },
+      { status: 200 }
+    );
   } catch (err: any) {
     console.error('Server PATCH Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -268,11 +342,22 @@ export async function PATCH(request: Request) {
 // ----------------------------------------------------------------------
 export async function DELETE(request: Request) {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase credentials are missing.' },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (!id) {
-      return NextResponse.json({ error: 'Blog ID query parameter is required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Blog ID query parameter is required.' },
+        { status: 400 }
+      );
     }
 
     const { error } = await supabase
@@ -285,9 +370,15 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Blog deleted successfully' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Blog deleted successfully' },
+      { status: 200 }
+    );
   } catch (err: any) {
     console.error('Server DELETE Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }
