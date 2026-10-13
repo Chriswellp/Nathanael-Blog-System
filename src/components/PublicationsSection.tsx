@@ -2,19 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 
-interface PublicationItem {
-  id: string;
-  title: string;
-  category: string;
-  author?: string;
-  journal_or_publisher?: string;
-  publication_date?: string;
-  abstract_summary?: string;
-  external_link?: string;
-  file_url?: string;
-  is_visible: boolean;
-  [key: string]: any;
-}
+setPublications((prev) => 
+  prev.map((item) => 
+    item.id === updatedItem.id 
+      ? {
+          id: updatedItem.id,
+          type: updatedItem.type || 'article', // <-- ADD THIS LINE
+          title: updatedItem.title,
+          category: updatedItem.category,
+          author: updatedItem.author,
+          journal_or_publisher: updatedItem.journal_or_publisher,
+          publication_date: updatedItem.publication_date,
+          abstract_summary: updatedItem.abstract_summary,
+          external_link: updatedItem.external_link,
+          file_url: updatedItem.file_url,
+          is_visible: Boolean(updatedItem.is_visible),
+          created_at: updatedItem.created_at,
+        }
+      : item
+  )
+);
 
 interface ResourceFile {
   id: string;
