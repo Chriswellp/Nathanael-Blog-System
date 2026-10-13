@@ -1,8 +1,32 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { HomePillarCard, HomeHeroData } from '@/src/types/home';
-import { sluggifyTitle } from '@/src/lib/stringUtils'; // IMPORTANT IMPORT
+import { sluggifyTitle } from '@/src/lib/stringUtils';
+
+export interface HomePillarCard {
+  id: string;
+  title: string;
+  desc?: string;
+  description?: string;
+  icon?: string;
+  link_page?: string;
+  link_anchor?: string;
+  is_visible?: boolean;
+  media_type?: 'image' | 'video' | 'none';
+  media_url?: string;
+  story_text?: string;
+}
+
+export interface HomeHeroData {
+  badgeText?: string;
+  authorName?: string;
+  tagline?: string;
+  quote?: string;
+  logoUrl?: string;
+  cardTitle?: string;
+  cardSubtitle?: string;
+  cardDescription?: string;
+}
 
 interface HomeProps {
   setActivePage: (page: string) => void;
@@ -24,8 +48,8 @@ const defaultPillars: HomePillarCard[] = [
     title: 'Comparing Systems',
     desc: 'Comparisons of legislation, policy, and practice across different countries to promote understanding and improve outcomes.',
     icon: '⚖️',
-    link_page: 'swab', // FIXED: Now correctly points to 'swab' page, not 'blog'
-    link_anchor: 'swab', // A clean, standard ID
+    link_page: 'swab',
+    link_anchor: 'swab',
     is_visible: true,
   },
   {
@@ -146,7 +170,6 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Active Slide Image */}
       {images.map((img, idx) => (
         <div
           key={idx}
@@ -159,10 +182,8 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
             alt={img.title}
             className="w-full h-full object-cover object-top select-none pointer-events-none"
           />
-          {/* Subtle Overlay Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
 
-          {/* Slide Caption Banner */}
           <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8 text-white space-y-1">
             <span className="text-amber-400 font-serif font-bold text-lg sm:text-2xl tracking-wide block drop-shadow">
               {img.title}
@@ -174,7 +195,6 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
         </div>
       ))}
 
-      {/* Slide Navigation Arrows */}
       <button
         onClick={() => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-slate-950/70 hover:bg-slate-900 text-amber-400 w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg transition border border-amber-500/40 shadow-xl cursor-pointer opacity-0 group-hover:opacity-100 active:scale-90"
@@ -191,7 +211,6 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
         &#10095;
       </button>
 
-      {/* Pagination Indicator Dots */}
       <div className="absolute bottom-5 right-6 z-20 flex gap-2">
         {images.map((_, idx) => (
           <button
@@ -209,12 +228,10 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
 }
 
 export default function Home({ setActivePage }: HomeProps) {
-  // Use state populated with default data
   const [pillars, setPillars] = useState<HomePillarCard[]>(defaultPillars);
   const [hero, setHero] = useState<HomeHeroData>(fallbackHero);
   const [selectedPillar, setSelectedPillar] = useState<HomePillarCard | null>(null);
 
-  // Load dynamic content on mount
   useEffect(() => {
     const fetchHomeContent = async () => {
       try {
@@ -241,11 +258,9 @@ export default function Home({ setActivePage }: HomeProps) {
             const formattedCards = loadedCards.map((card: any) => ({
               ...card,
               desc: card.desc || card.description || '',
-              // NEW: Ensure link_anchor is sluggified, preventing empty string IDs in fallback or API data
               link_anchor: card.link_anchor || sluggifyTitle(card.title) 
             }));
 
-            // Only show visible pillars
             setPillars(formattedCards.filter((p: HomePillarCard) => p.is_visible !== false));
           }
         }
@@ -261,22 +276,13 @@ export default function Home({ setActivePage }: HomeProps) {
     e.preventDefault();
   };
 
-  /**
-   * Cross-page navigation handler. Sets page state and predicted hash.
-   */
   const handleCrossPageNav = (targetPage: string, targetSectionId?: string) => {
-    console.log(`Executing navigation - Target Page: ${targetPage}, Scrolling to ID: ${targetSectionId}`);
     setActivePage(targetPage);
-    
-    // Predice the destination HTML ID. If none provided, default to page slug.
     const strictHash = targetSectionId || targetPage;
     window.location.hash = strictHash;
-
-    // Force Close the modal if open
     setSelectedPillar(null);
   };
 
-  // Extract valid card images for the auto slideshow gallery
   const galleryImages = pillars
     .filter((p) => p.media_type === 'image' && p.media_url)
     .map((p) => ({
@@ -290,12 +296,10 @@ export default function Home({ setActivePage }: HomeProps) {
       
       {/* HERO SECTION */}
       <section className="bg-[#0b1b36] text-white py-16 sm:py-20 border-b-4 border-amber-500 relative overflow-hidden">
-        {/* Subtle Background Glow Accent */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center relative z-10">
           
-          {/* Left Hero Content */}
           <div className="space-y-6">
             <div className="inline-block px-4 py-1.5 bg-amber-500/20 border border-amber-400/40 text-amber-400 text-xs font-bold tracking-widest uppercase rounded-full shadow-sm">
               {hero.badgeText || fallbackHero.badgeText}
@@ -315,14 +319,12 @@ export default function Home({ setActivePage }: HomeProps) {
 
             <div className="flex flex-wrap gap-3 sm:gap-4 pt-2">
               <button
-                // Standard biography link
                 onClick={() => handleCrossPageNav('about', 'professional-journey-vision')} 
                 className="bg-amber-400 text-slate-950 px-6 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-amber-500 active:scale-95 transition-all shadow-lg hover:shadow-amber-500/20 cursor-pointer"
               >
                 Read Biography
               </button>
               <button
-                // NEW: Robust SWAB link targets the 'swab' page, not 'blog'
                 onClick={() => handleCrossPageNav('swab', 'swab')}
                 className="border-2 border-amber-400 text-amber-400 px-6 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-amber-400 hover:text-slate-950 active:scale-95 transition-all cursor-pointer"
               >
@@ -337,7 +339,6 @@ export default function Home({ setActivePage }: HomeProps) {
             </div>
           </div>
 
-          {/* Right Hero Branding Card */}
           <div className="bg-[#071326] p-8 sm:p-10 rounded-3xl border border-amber-500/30 shadow-2xl flex flex-col justify-center items-center text-center hover:border-amber-400/60 transition duration-300 relative group">
             <div className="w-40 h-40 sm:w-52 sm:h-52 flex items-center justify-center shrink-0 mb-4 group-hover:scale-105 transition duration-500">
               <img
@@ -380,7 +381,7 @@ export default function Home({ setActivePage }: HomeProps) {
         </section>
       )}
 
-      {/* CORE PILLARS SECTION - SMOOTH CLASSIC CARDS */}
+      {/* CORE PILLARS SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#0b1b36] mb-3 tracking-tight">
@@ -392,10 +393,9 @@ export default function Home({ setActivePage }: HomeProps) {
           </p>
         </div>
 
-        {/* Responsive Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {pillars.map((pillar) => {
-            const cardDescription = pillar.desc || (pillar as any).description || '';
+            const cardDescription = pillar.desc || pillar.description || '';
 
             return (
               <div
@@ -403,7 +403,6 @@ export default function Home({ setActivePage }: HomeProps) {
                 className="bg-white rounded-3xl border border-slate-200/80 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between overflow-hidden group hover:border-amber-400/50"
               >
                 <div>
-                  {/* Media Banner Container */}
                   {pillar.media_type === 'image' && pillar.media_url && (
                     <div className="w-full aspect-[4/3] bg-[#071326] relative overflow-hidden">
                       <img
@@ -438,7 +437,6 @@ export default function Home({ setActivePage }: HomeProps) {
                     </div>
                   )}
 
-                  {/* Card Content Body */}
                   <div className="p-6 sm:p-8 space-y-3">
                     <h3 className="text-xl sm:text-2xl font-bold font-serif text-[#0b1b36] tracking-tight leading-snug">
                       {pillar.title}
@@ -450,7 +448,6 @@ export default function Home({ setActivePage }: HomeProps) {
                   </div>
                 </div>
 
-                {/* Action Button Footer */}
                 <div className="px-6 pb-6 sm:px-8 sm:pb-8 pt-2">
                   <button
                     onClick={() => setSelectedPillar({ ...pillar, desc: cardDescription })}
@@ -465,7 +462,7 @@ export default function Home({ setActivePage }: HomeProps) {
         </div>
       </section>
 
-      {/* POPUP DIALOG / MODAL FOR FULL DETAILS */}
+      {/* MODAL POPUP */}
       {selectedPillar && (
         <div
           className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
@@ -475,7 +472,6 @@ export default function Home({ setActivePage }: HomeProps) {
             className="bg-white border border-stone-200 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={() => setSelectedPillar(null)}
               className="absolute top-4 right-4 z-30 bg-[#071326]/80 text-white hover:bg-[#071326] w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition cursor-pointer shadow-lg border border-slate-700"
@@ -483,7 +479,6 @@ export default function Home({ setActivePage }: HomeProps) {
               ✕
             </button>
 
-            {/* Modal Media Top Aligned */}
             <div className="shrink-0 w-full bg-[#071326]">
               {selectedPillar.media_type === 'image' && selectedPillar.media_url && (
                 <div className="w-full h-56 sm:h-72 relative overflow-hidden">
@@ -528,7 +523,6 @@ export default function Home({ setActivePage }: HomeProps) {
               )}
             </div>
 
-            {/* Scrollable Description Section */}
             <div className="p-6 sm:p-8 space-y-4 overflow-y-auto flex-1 text-slate-800">
               <h3 className="text-2xl sm:text-3xl font-bold font-serif text-[#0b1b36] tracking-tight leading-snug">
                 {selectedPillar.title}
@@ -537,17 +531,16 @@ export default function Home({ setActivePage }: HomeProps) {
               <div className="w-16 h-1 bg-amber-400 rounded-full"></div>
 
               <div className="text-slate-700 text-sm sm:text-base leading-relaxed space-y-3 whitespace-pre-line">
-                {selectedPillar.desc || (selectedPillar as any).description}
+                {selectedPillar.desc || selectedPillar.description}
               </div>
 
               {selectedPillar.story_text && (
                 <blockquote className="bg-amber-500/10 border-l-4 border-amber-400 p-4 rounded-r-xl text-xs sm:text-sm text-slate-800 italic leading-relaxed my-4">
-                  "{selectedPillar.story_text}"
+                  &quot;{selectedPillar.story_text}&quot;
                 </blockquote>
               )}
             </div>
 
-            {/* Modal Footer */}
             <div className="p-4 sm:px-8 border-t border-stone-200 bg-stone-50 flex justify-end gap-3 shrink-0">
               <button
                 onClick={() => setSelectedPillar(null)}
@@ -557,14 +550,11 @@ export default function Home({ setActivePage }: HomeProps) {
               </button>
               <button
                 onClick={() => {
-                  // NEW: Strict fuzzy matching logic within the modal footer
                   const lowerTitle = selectedPillar.title.toLowerCase();
                   let targetPage = selectedPillar.link_page || selectedPillar.id;
                   let targetSectionId = selectedPillar.link_anchor;
 
                   if (lowerTitle.includes('compar')) {
-                    // Force navigation to the 'swab' page and ID
-                    console.log("Fuzzy match: 'Comparing' identified. Routing to 'swab' page.");
                     targetPage = 'swab';
                     targetSectionId = 'swab';
                   } else if (lowerTitle.includes('abou')) {
@@ -587,7 +577,6 @@ export default function Home({ setActivePage }: HomeProps) {
                     targetSectionId = 'practitioner-tools-downloadable-assets';
                   }
                   
-                  // Execute navigation using corrected values
                   handleCrossPageNav(targetPage, targetSectionId);
                 }}
                 className="px-6 py-2.5 rounded-xl text-xs font-bold bg-[#0b1b36] hover:bg-[#071326] text-amber-400 uppercase tracking-wider cursor-pointer shadow transition border border-amber-500/30"
@@ -599,7 +588,7 @@ export default function Home({ setActivePage }: HomeProps) {
         </div>
       )}
 
-      {/* BOTTOM BANNER CTA SECTION */}
+      {/* BOTTOM CTA */}
       <section className="bg-[#0b1b36] text-white py-14 border-t-4 border-amber-500 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="text-center md:text-left space-y-1">
