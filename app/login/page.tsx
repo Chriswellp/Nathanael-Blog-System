@@ -1,6 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/src/lib/supabaseClient';
@@ -13,7 +15,7 @@ interface StatusItem {
   created_at: string;
 }
 
-export default function LoginPage() {
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showLoginForm, setShowLoginForm] = useState(true);
@@ -135,26 +137,18 @@ export default function LoginPage() {
     setForgotErrorMsg('');
 
     try {
-      // Check if user exists by querying your database or using an API route / server action,
-      // or check against bookings/profiles table if you store users there. 
-      // Since Supabase Auth doesn't allow direct public listing of emails for security, 
-      // we can verify against your `bookings` table or use a secure check. 
-      // Alternatively, let's verify if the email exists in the `bookings` table or users profile table.
       const { data, error } = await supabase
         .from('bookings')
         .select('email')
         .ilike('email', resetEmailInput.trim())
         .limit(1);
 
-      // If you also want to check general existence or allow any email entered during registration:
-      // Let's accept the email directly for the reset dialog step:
       if (error) {
         setForgotErrorMsg('Could not verify email in database.');
         setVerifyLoading(false);
         return;
       }
 
-      // Proceed straight to the new password dialog smoothly
       setVerifiedEmailForReset(resetEmailInput.trim());
       setShowForgotPasswordModal(false);
       setResetEmailInput('');
@@ -185,13 +179,6 @@ export default function LoginPage() {
     setUpdateSuccessMsg('');
 
     try {
-      // Note: To update a user's password directly via admin or secure flow without email token, 
-      // Supabase requires an active session or a server-side admin client call. 
-      // Since this is client-side, we can use a custom API route or sign them in temporarily 
-      // via an admin endpoint, OR use supabase.auth.updateUser() if a recovery session is active.
-      // To keep it fully working on the client without email, let's use a secure fetch to an API route 
-      // or handle the update. Let's provide the clean UI action here:
-      
       const response = await fetch('/api/update-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -654,5 +641,13 @@ export default function LoginPage() {
       )}
 
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center text-xs">Loading login portal...</div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }
