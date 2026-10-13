@@ -272,11 +272,18 @@ const [cardLinkPage, setCardLinkPage] = useState('blog');
           created_at: pub.created_at || new Date().toISOString(),
         }));
 
-        setPublications((prev) => {
+       setPublications((prev) => {
           if (normalizedRecords.length === 0 && prev.length > 0) {
             return prev;
           }
-          return normalizedRecords;
+          return normalizedRecords.map((record: any) => {
+            const existing = prev.find((p) => p.id === record.id);
+            return {
+              ...(existing || {}),
+              ...record,
+              type: record.type || existing?.type || 'article',
+            };
+          });
         });
       }
     } catch (error) {
