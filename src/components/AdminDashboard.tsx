@@ -283,7 +283,7 @@ const [cardLinkPage, setCardLinkPage] = useState('blog');
               ...record,
               type: record.type || existing?.type || 'article',
             };
-          });
+          }) as PublicationItem[];
         });
       }
     } catch (error) {
