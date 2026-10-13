@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/src/lib/supabaseClient';
+import { User } from '@supabase/supabase-js';
 
 interface Message {
   id: string;
@@ -13,36 +14,43 @@ interface Message {
   created_at: string;
 }
 
+interface NavbarProps {
+  activePage: string;
+  setActivePage: (page: string) => void;
+  user?: User | null;
+}
+
 export default function Navbar({
   activePage,
   setActivePage,
-}: {
-  activePage: string;
-  setActivePage: (page: string) => void;
-}) {
+  user,
+}: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Chat Platform State
   const [showChatModal, setShowChatModal] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(user ?? null);
   const [loadingChat, setLoadingChat] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
 
-  // 1. Fetch authenticated user details
+  // Keep internal state in sync with passed user prop, fallback to client fetch
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      // Ensure currentUser is null if not authenticated, enabling strict checks later
-      setCurrentUser(user ?? null);
-    };
-    getUser();
-  }, []);
+    if (user !== undefined) {
+      setCurrentUser(user);
+    } else {
+      const getUser = async () => {
+        const { data: { user: fetchedUser } } = await supabase.auth.getUser();
+        setCurrentUser(fetchedUser ?? null);
+      };
+      getUser();
+    }
+  }, [user]);
 
-  // 2. Fetch history and subscribe to live messages when chat opens
+  // Fetch history and subscribe to live messages when chat opens
   useEffect(() => {
     if (!showChatModal || !currentUser) return;
 
@@ -97,7 +105,7 @@ export default function Navbar({
   }, [messages]);
 
   const fetchChatHistory = async () => {
-    if (!currentUser) return; // Robustness check
+    if (!currentUser) return;
     
     setLoadingChat(true);
     const { data, error } = await supabase
@@ -132,18 +140,12 @@ export default function Navbar({
     }
   };
 
-  /**
-   * Action handler for "Let's Chat" button.
-   * Redirects to login if not authenticated, otherwise opens chat.
-   */
   const handleChatAction = () => {
     if (currentUser) {
-      // User is logged in, show the chat modal
-      setMobileMenuOpen(false); // Close mobile menu if open
+      setMobileMenuOpen(false);
       setShowChatModal(true);
     } else {
-      // User is not logged in, redirect to login page
-      setMobileMenuOpen(false); // Close mobile menu if open
+      setMobileMenuOpen(false);
       router.push('/login');
     }
   };
@@ -210,7 +212,7 @@ export default function Navbar({
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center">
             <button
-              onClick={handleChatAction} // Use combined handler for auth check
+              onClick={handleChatAction}
               className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow-sm hover:shadow-amber-400/20 flex items-center gap-1.5 active:scale-95 cursor-pointer"
             >
               💬 Let&apos;s Chat
@@ -261,7 +263,7 @@ export default function Navbar({
 
             <div className="pt-2 border-t border-slate-800/80">
               <button
-                onClick={handleChatAction} // Use combined handler for auth check
+                onClick={handleChatAction}
                 className="w-full text-center bg-amber-400 hover:bg-amber-500 text-slate-950 py-2 rounded-lg font-bold text-xs tracking-wider uppercase shadow flex items-center justify-center gap-1.5 active:scale-95 transition"
               >
                 💬 Support Chat
@@ -271,7 +273,7 @@ export default function Navbar({
         )}
       </header>
 
-      {/* Floating Chat Modal (only renders if authenticated throughhandleChatAction) */}
+      {/* Floating Chat Modal */}
       {showChatModal && currentUser && (
         <div className="fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-4 sm:right-4 z-50 w-auto sm:w-[400px] h-[480px] max-h-[85vh] bg-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           
