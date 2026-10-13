@@ -1,7 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { HomePillarCard } from '@/src/types/home';
+
+export interface HomePillarCard {
+  id?: string;
+  title: string;
+  desc?: string;
+  description?: string;
+  icon?: string;
+  link_page?: string;
+  link_anchor?: string;
+  is_visible?: boolean;
+  media_type?: 'none' | 'image' | 'video';
+  media_url?: string;
+  story_text?: string;
+  [key: string]: any;
+}
 
 interface HomeCardModalProps {
   isOpen: boolean;
@@ -31,7 +45,7 @@ export default function HomeCardModal({
   useEffect(() => {
     if (editingCard) {
       setTitle(editingCard.title || '');
-      setDesc(editingCard.desc || '');
+      setDesc(editingCard.desc || editingCard.description || '');
       setIcon(editingCard.icon || '📖');
       setLinkPage(editingCard.link_page || 'blog');
       setMediaType(editingCard.media_type || 'none');
@@ -216,7 +230,7 @@ export default function HomeCardModal({
             <button
               type="submit"
               disabled={isSaving}
-              className="px-5 py-2 rounded-xl text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 transition cursor-pointer"
+              className="px-5 py-2 rounded-xl text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 transition cursor-pointer disabled:opacity-50"
             >
               {isSaving ? 'Saving...' : editingCard ? 'Update Card' : 'Save Card'}
             </button>
