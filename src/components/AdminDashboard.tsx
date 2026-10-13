@@ -271,8 +271,7 @@ const [cardLinkPage, setCardLinkPage] = useState('blog');
           is_visible: pub.is_visible !== undefined ? Boolean(pub.is_visible) : true,
           created_at: pub.created_at || new Date().toISOString(),
         }));
-
-       setPublications((prev) => {
+setPublications((prev) => {
           if (normalizedRecords.length === 0 && prev.length > 0) {
             return prev;
           }
