@@ -1,10 +1,19 @@
-// components/VideoComponent.jsx
+'use client';
+
 import React from 'react';
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
-export default function VideoComponent({ roomName = "YourCustomRoomNameHere", userName = "" }) {
+interface VideoComponentProps {
+  roomName?: string;
+  userName?: string;
+}
+
+export default function VideoComponent({
+  roomName = "YourCustomRoomNameHere",
+  userName = "Guest User",
+}: VideoComponentProps) {
   return (
-    <div style={{ height: '700px', width: '100%' }}>
+    <div className="h-[700px] w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950">
       <JitsiMeeting
         domain="meet.jit.si"
         roomName={roomName}
@@ -18,11 +27,14 @@ export default function VideoComponent({ roomName = "YourCustomRoomNameHere", us
           MOBILE_APP_PROMO: false,    // Suppresses app installation banners
         }}
         userInfo={{
-          displayName: userName,
+          displayName: userName || 'Guest User',
+          email: '',
         }}
-        getIFrameRef={(iframeRef) => {
-          iframeRef.style.height = '100%';
-          iframeRef.style.width = '100%';
+        getIFrameRef={(parentNode) => {
+          if (parentNode) {
+            parentNode.style.height = '100%';
+            parentNode.style.width = '100%';
+          }
         }}
       />
     </div>
