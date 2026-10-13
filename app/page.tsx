@@ -16,13 +16,10 @@ import SpeakingSection from '../src/components/SpeakingSection';
 import AdminDashboard from '../src/components/AdminDashboard';
 import ResourcesSection from '../src/components/ResourcesSection';
 
-function MainContent() {
-  const [activePage, setActivePage] = useState('home');
-  const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
+// Separate component that safely reads searchParams inside Suspense
+function SearchParamsHandler({ setActivePage }: { setActivePage: (page: string) => void }) {
   const searchParams = useSearchParams();
 
-  // Read URL search parameters to preserve redirected section state safely inside Suspense
   useEffect(() => {
     const pageParam = searchParams.get('page');
     const redirectParam = searchParams.get('redirect');
@@ -43,7 +40,15 @@ function MainContent() {
         setActivePage(pageParam);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, setActivePage]);
+
+  return null;
+}
+
+export default function MainPage() {
+  const [activePage, setActivePage] = useState('home');
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Initial session retrieval (Does not block guest access)
@@ -67,6 +72,11 @@ function MainContent() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-swab-bgLight">
+      {/* Suspense boundary specifically wrapping the searchParams reader */}
+      <Suspense fallback={null}>
+        <SearchParamsHandler setActivePage={setActivePage} />
+      </Suspense>
+
       <Navbar activePage={activePage} setActivePage={setActivePage} user={user} />
 
       <main className="flex-1 bg-slate-100">
@@ -106,13 +116,5 @@ function MainContent() {
         </div>
       </footer>
     </div>
-  );
-}
-
-export default function MainPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-100 flex items-center justify-center text-xs text-slate-600">Loading portal...</div>}>
-      <MainContent />
-    </Suspense>
   );
 }
