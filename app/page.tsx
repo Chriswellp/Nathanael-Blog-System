@@ -1,28 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '@/src/lib/supabaseClient';
-import LiveStreamsSection from '@/src/components/LiveStreamsSection';
-import Navbar from '@/src/components/Navbar';
-import Home from '@/src/components/Home';
-import AboutSection from '@/src/components/AboutSection';
-import SwabHubSection from '@/src/components/SwabHubSection';
-import BlogSection from '@/src/components/BlogSection';
-import ContactSection from '@/src/components/ContactSection';
-import PublicationsSection from '@/src/components/PublicationsSection';
-import SpeakingSection from '@/src/components/SpeakingSection';
-import AdminDashboard from '@/src/components/AdminDashboard';
-import ResourcesSection from '@/src/components/ResourcesSection';
+import { supabase } from '../src/lib/supabaseClient';
+import LiveStreamsSection from '../src/components/LiveStreamsSection';
+import Navbar from '../src/components/Navbar';
+import Home from '../src/components/Home';
+import AboutSection from '../src/components/AboutSection';
+import SwabHubSection from '../src/components/SwabHubSection';
+import BlogSection from '../src/components/BlogSection';
+import ContactSection from '../src/components/ContactSection';
+import PublicationsSection from '../src/components/PublicationsSection';
+import SpeakingSection from '../src/components/SpeakingSection';
+import AdminDashboard from '../src/components/AdminDashboard';
+import ResourcesSection from '../src/components/ResourcesSection';
 
-export default function MainPage() {
+function MainContent() {
   const [activePage, setActivePage] = useState('home');
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Read URL search parameters to preserve redirected section state
+  // Read URL search parameters to preserve redirected section state safely inside Suspense
   useEffect(() => {
     const pageParam = searchParams.get('page');
     const redirectParam = searchParams.get('redirect');
@@ -106,5 +106,13 @@ export default function MainPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function MainPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-100 flex items-center justify-center text-xs text-slate-600">Loading portal...</div>}>
+      <MainContent />
+    </Suspense>
   );
 }
