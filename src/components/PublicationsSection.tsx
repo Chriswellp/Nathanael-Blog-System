@@ -2,26 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 
-setPublications((prev) => 
-  prev.map((item) => 
-    item.id === updatedItem.id 
-      ? {
-          id: updatedItem.id,
-          type: updatedItem.type || 'article', // <-- ADD THIS LINE
-          title: updatedItem.title,
-          category: updatedItem.category,
-          author: updatedItem.author,
-          journal_or_publisher: updatedItem.journal_or_publisher,
-          publication_date: updatedItem.publication_date,
-          abstract_summary: updatedItem.abstract_summary,
-          external_link: updatedItem.external_link,
-          file_url: updatedItem.file_url,
-          is_visible: Boolean(updatedItem.is_visible),
-          created_at: updatedItem.created_at,
-        }
-      : item
-  )
-);
+export interface PublicationItem {
+  id: string;
+  type: string;
+  title: string;
+  category: string;
+  author?: string;
+  journal_or_publisher?: string;
+  publication_date?: string;
+  abstract_summary?: string;
+  external_link?: string;
+  file_url?: string;
+  is_visible: boolean;
+  created_at?: string;
+  [key: string]: any;
+}
 
 interface ResourceFile {
   id: string;
@@ -147,7 +142,6 @@ export default function PublicationsSection({ _setActivePage }: { _setActivePage
     }
 
     try {
-      // Fetch file as binary blob to force browser download prompt
       const response = await fetch(fileUrl, { cache: 'no-store' });
       if (!response.ok) throw new Error('File fetch failed');
 
@@ -164,12 +158,10 @@ export default function PublicationsSection({ _setActivePage }: { _setActivePage
       document.body.appendChild(link);
       link.click();
       
-      // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.warn('Blob download fallback triggered:', err);
-      // Fallback download anchor if CORS blocks blob fetch
       const a = document.createElement('a');
       a.href = fileUrl;
       a.download = fileName || 'download';
@@ -373,7 +365,6 @@ export default function PublicationsSection({ _setActivePage }: { _setActivePage
                     </div>
                   ) : item.fileUrl ? (
                     <div className="h-48 bg-slate-900 border-b border-slate-200 overflow-hidden relative group-hover:opacity-95 transition flex items-center justify-center">
-                      {/* Responsive Document First Page Viewer for Mobile & Desktop */}
                       <iframe
                         src={`https://docs.google.com/viewer?url=${encodeURIComponent(item.fileUrl)}&embedded=true`}
                         title={`Preview of ${item.title}`}
