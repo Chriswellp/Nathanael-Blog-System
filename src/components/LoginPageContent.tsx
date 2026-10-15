@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabaseClient';
 
 interface StatusItem {
@@ -13,9 +13,8 @@ interface StatusItem {
   created_at: string;
 }
 
-function LoginInnerContent() {
+export default function LoginPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [showLoginForm, setShowLoginForm] = useState(true);
 
   const [email, setEmail] = useState('');
@@ -77,53 +76,38 @@ function LoginInnerContent() {
     fetchStatuses();
   }, []);
 
-  // Capture all potential redirect parameters safely inside Suspense
-  const redirectPage = searchParams.get('redirect');
-  const actionParam = searchParams.get('action');
-  const speakingSection = searchParams.get('speakingsection');
-
-  const signupQuery = new URLSearchParams();
-  if (redirectPage) signupQuery.set('redirect', redirectPage);
-  if (actionParam) signupQuery.set('action', actionParam);
-  if (speakingSection) signupQuery.set('speakingsection', speakingSection);
-  const signupHref = signupQuery.toString() ? `/signup?${signupQuery.toString()}` : '/signup';
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
+    const cleanEmail = email.trim().toLowerCase();
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       });
 
       if (error) {
         setErrorMsg(error.message);
         setLoading(false);
-      } else {
-        const userRole = data.user?.user_metadata?.role;
-        const isAdmin = userRole === 'admin' || data.user?.email === 'admin@nathanael.com';
-
-        if (isAdmin) {
-          router.push('/admin');
-        } else {
-          if (speakingSection) {
-            router.push(`/?speakingsection=${speakingSection}`);
-          } else if (redirectPage) {
-            const destination = actionParam
-              ? `/?page=${redirectPage}&action=${actionParam}`
-              : `/?page=${redirectPage}`;
-            router.push(destination);
-          } else {
-            router.push('/');
-          }
-        }
+        return;
       }
-    } catch (err) {
+
+      const user = data.user;
+      const userRole = user?.user_metadata?.role;
+      const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
+
+      if (isAdmin) {
+        router.push('/admin');
+        router.refresh();
+      } else {
+        router.push('/');
+      }
+    } catch (err: any) {
       console.error('Login error:', err);
-      setErrorMsg('An unexpected error occurred. Please try again.');
+      setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -407,7 +391,7 @@ function LoginInnerContent() {
 
               <div className="pt-2 text-center text-xs text-slate-400">
                 Don&apos;t have an account?{' '}
-                <Link href={signupHref} className="text-amber-400 font-semibold hover:underline">
+                <Link href="/signup" className="text-amber-400 font-semibold hover:underline">
                   Sign up here
                 </Link>
               </div>
@@ -639,13 +623,5 @@ function LoginInnerContent() {
       )}
 
     </div>
-  );
-}
-
-export default function LoginPageContent() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center text-xs">Loading login portal...</div>}>
-      <LoginInnerContent />
-    </Suspense>
   );
 }
