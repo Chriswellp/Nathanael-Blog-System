@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/src/lib/supabaseClient';
 
-export default function SignupPage() {
+function SignupInnerContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -72,7 +72,7 @@ export default function SignupPage() {
 
     try {
       // Dynamically resolve site URL for correct redirects in production and local environments
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
       const { data, error } = await supabase.auth.signUp({
         email: cleanEmail,
@@ -297,5 +297,13 @@ export default function SignupPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center text-xs">Loading signup portal...</div>}>
+      <SignupInnerContent />
+    </Suspense>
   );
 }
