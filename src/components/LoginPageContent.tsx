@@ -76,12 +76,13 @@ export default function LoginPageContent() {
     fetchStatuses();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
+ const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
-    const cleanEmail = email.trim().toLowerCase();
+    // Ensure email is completely normalized
+    const cleanEmail = email ? email.trim().toLowerCase() : '';
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -96,10 +97,14 @@ export default function LoginPageContent() {
       }
 
       const user = data.user;
-      const userRole = user?.user_metadata?.role;
+      
+      // Robust check: evaluate email, user metadata role, or user app_metadata role
+      const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
       const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
       if (isAdmin) {
+        // Small delay to ensure cookies are fully set on production domain before redirecting
+        await new Promise((resolve) => setTimeout(resolve, 300️));
         router.push('/admin');
         router.refresh();
       } else {
@@ -108,6 +113,7 @@ export default function LoginPageContent() {
     } catch (err: any) {
       console.error('Login error:', err);
       setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
