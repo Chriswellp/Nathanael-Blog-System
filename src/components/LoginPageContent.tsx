@@ -76,12 +76,11 @@ export default function LoginPageContent() {
     fetchStatuses();
   }, []);
 
- const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
-    // Ensure email is completely normalized
     const cleanEmail = email ? email.trim().toLowerCase() : '';
 
     try {
@@ -97,14 +96,10 @@ export default function LoginPageContent() {
       }
 
       const user = data.user;
-      
-      // Robust check: evaluate email, user metadata role, or user app_metadata role
       const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
       const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
       if (isAdmin) {
-        // Small delay to ensure cookies are fully set on production domain before redirecting
-        await new Promise((resolve) => setTimeout(resolve, 300️));
         router.push('/admin');
         router.refresh();
       } else {
