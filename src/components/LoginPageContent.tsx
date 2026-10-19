@@ -102,7 +102,7 @@ const handleLogin = async (e: React.FormEvent) => {
     const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
     if (isAdmin) {
-     window.location.href = '/admin';
+     window.location.href = '/?redirect=admin';
       router.refresh();
     } else {
       window.location.href = '/';
