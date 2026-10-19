@@ -364,13 +364,9 @@ export default function PublicationsSection({ _setActivePage }: { _setActivePage
                       </span>
                     </div>
                   ) : item.fileUrl ? (
-                    <div className="h-48 bg-slate-900 border-b border-slate-200 overflow-hidden relative group-hover:opacity-95 transition flex items-center justify-center">
-                      <iframe
-                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(item.fileUrl)}&embedded=true`}
-                        title={`Preview of ${item.title}`}
-                        className="w-full h-full pointer-events-none border-0 scale-105"
-                      />
-                      <div className="absolute inset-0 bg-slate-950/20 pointer-events-none" />
+                    <div className="h-36 bg-slate-900 border-b border-slate-200 flex flex-col items-center justify-center p-4 text-center text-white">
+                      <span className="text-3xl mb-1">📄</span>
+                      <span className="text-xs font-semibold text-amber-400">PDF Document</span>
                     </div>
                   ) : null}
 
