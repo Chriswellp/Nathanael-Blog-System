@@ -102,10 +102,10 @@ const handleLogin = async (e: React.FormEvent) => {
     const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
     if (isAdmin) {
-      router.push('/admin');
+     window.location.href = '/admin';
       router.refresh();
     } else {
-      router.push('/');
+      window.location.href = '/';
     }
   } catch (err: any) {
     console.error('Login error:', err);
