@@ -76,44 +76,46 @@ export default function LoginPageContent() {
     fetchStatuses();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg('');
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setErrorMsg('');
 
-    const cleanEmail = email ? email.trim().toLowerCase() : '';
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password,
-      });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password,
+    });
 
-      if (error) {
-        setErrorMsg(error.message);
-        setLoading(false);
-        return;
-      }
-
-      const user = data.user;
-      const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
-      const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
-
-      if (isAdmin) {
-        router.push('/admin');
-        router.refresh();
-      } else {
-        router.push('/');
-      }
-    } catch (err: any) {
-      console.error('Login error:', err);
-      setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
-    } finally {
+    if (error) {
+      setErrorMsg(error.message);
       setLoading(false);
+      return;
     }
-  };
 
-  // --- REPLACED: NATIVE SUPABASE AUTH PASSWORD RESET ---
+
+    const user = data.user;
+    const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
+    // Explicit Admin Check
+    const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
+
+    if (isAdmin) {
+      router.push('/admin');
+      router.refresh();
+    } else {
+      router.push('/');
+    }
+  } catch (err: any) {
+    console.error('Login error:', err);
+    setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setVerifyLoading(true);
