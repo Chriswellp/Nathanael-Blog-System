@@ -76,63 +76,65 @@ export default function LoginPageContent() {
     fetchStatuses();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg('');
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setErrorMsg('');
 
-    const cleanEmail = email ? email.trim().toLowerCase() : '';
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password,
-      });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password,
+    });
 
-      if (error) {
-        setErrorMsg(error.message);
-        setLoading(false);
-        return;
-      }
-
-      const user = data.user;
-      const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
-      const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
-
-      if (isAdmin) {
-        router.push('/admin');
-        router.refresh();
-      } else {
-        router.push('/');
-      }
-    } catch (err: any) {
-      console.error('Login error:', err);
-      setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
-    } finally {
+    if (error) {
+      setErrorMsg(error.message);
       setLoading(false);
+      return;
     }
-  };
 
-  // --- STEP 1: VERIFY EMAIL EXISTS IN DATABASE DIRECTLY ---
+    const user = data.user;
+    const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
+    // Explicit Admin Check
+    const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
+
+    if (isAdmin) {
+      router.push('/admin');
+      router.refresh();
+    } else {
+      router.push('/');
+    }
+  } catch (err: any) {
+    console.error('Login error:', err);
+    setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // --- REPLACED: NATIVE SUPABASE AUTH PASSWORD RESET ---
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setVerifyLoading(true);
     setForgotErrorMsg('');
 
+    const targetEmail = resetEmailInput.trim().toLowerCase();
+
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('email')
-        .ilike('email', resetEmailInput.trim())
-        .limit(1);
+      // Trigger Supabase built-in password recovery email / verification
+      const { error } = await supabase.auth.resetPasswordForEmail(targetEmail, {
+        redirectTo: `${window.location.origin}/login`,
+      });
 
       if (error) {
-        setForgotErrorMsg('Could not verify email in database.');
+        setForgotErrorMsg(error.message);
         setVerifyLoading(false);
         return;
       }
 
-      setVerifiedEmailForReset(resetEmailInput.trim());
+      setVerifiedEmailForReset(targetEmail);
       setShowForgotPasswordModal(false);
       setResetEmailInput('');
       setShowNewPasswordModal(true);
