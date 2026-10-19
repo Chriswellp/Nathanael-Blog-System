@@ -113,26 +113,27 @@ export default function LoginPageContent() {
     }
   };
 
-  // --- STEP 1: VERIFY EMAIL EXISTS IN DATABASE DIRECTLY ---
+  // --- REPLACED: NATIVE SUPABASE AUTH PASSWORD RESET ---
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setVerifyLoading(true);
     setForgotErrorMsg('');
 
+    const targetEmail = resetEmailInput.trim().toLowerCase();
+
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('email')
-        .ilike('email', resetEmailInput.trim())
-        .limit(1);
+      // Trigger Supabase built-in password recovery email / verification
+      const { error } = await supabase.auth.resetPasswordForEmail(targetEmail, {
+        redirectTo: `${window.location.origin}/login`,
+      });
 
       if (error) {
-        setForgotErrorMsg('Could not verify email in database.');
+        setForgotErrorMsg(error.message);
         setVerifyLoading(false);
         return;
       }
 
-      setVerifiedEmailForReset(resetEmailInput.trim());
+      setVerifiedEmailForReset(targetEmail);
       setShowForgotPasswordModal(false);
       setResetEmailInput('');
       setShowNewPasswordModal(true);
