@@ -95,16 +95,27 @@ const handleLogin = async (e: React.FormEvent) => {
       return;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 850892a
     const user = data.user;
     const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
     // Explicit Admin Check
     const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
     if (isAdmin) {
+<<<<<<< HEAD
       router.push('/admin');
       router.refresh();
     } else {
       router.push('/');
+=======
+     window.location.href = '/?redirect=admin';
+      router.refresh();
+    } else {
+      window.location.href = '/';
+>>>>>>> 850892a
     }
   } catch (err: any) {
     console.error('Login error:', err);
@@ -114,7 +125,10 @@ const handleLogin = async (e: React.FormEvent) => {
   }
 };
 
+<<<<<<< HEAD
   // --- REPLACED: NATIVE SUPABASE AUTH PASSWORD RESET ---
+=======
+>>>>>>> 850892a
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setVerifyLoading(true);
