@@ -39,6 +39,10 @@ export const metadata: Metadata = {
     description:
       "Bridging communities and driving social transformation worldwide.",
   },
+  verification:{
+
+google: "OnbkyHyfbc5pDYHq9cxdoeofQXzU0Rjaah2pB3Cpifo"
+  }
 };
 
 export default function RootLayout({
