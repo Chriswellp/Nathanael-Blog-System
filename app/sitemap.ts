@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://nathanael-blog-system-kebj-hrdg7uzzs-peyarachris-9027s-projects.vercel.app';
+  const baseUrl = 'https://nathanael-blog-system-44yf.vercel.app';
 
   // Static routes
   const staticRoutes = ['', '/about', '/blog', '/publications', '/resources', '/contact', '/live'].map((route) => ({
@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    // Optionally fetch dynamic blog posts or publications from your database/API to include them in the sitemap
+    // Fetch dynamic blog posts to include individual post links in the sitemap
     const blogsRes = await fetch(`${baseUrl}/api/blogs`, { cache: 'no-store' });
     const blogsData = blogsRes.ok ? await blogsRes.json() : [];
     const blogs = Array.isArray(blogsData) ? blogsData : blogsData.data || [];
