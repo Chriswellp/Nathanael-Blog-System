@@ -31,7 +31,7 @@ export default function LoginPageContent() {
   // --- IN-APP NEW PASSWORD DIALOG STATES ---
   const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
   const [verifiedEmailForReset, setVerifiedEmailForReset] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [newPassword, setNewPassword] = useState(''); 
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateErrorMsg, setUpdateErrorMsg] = useState('');
