@@ -107,8 +107,7 @@ const handleLogin = async (e: React.FormEvent) => {
       window.location.href = '/?redirect=admin';
       router.refresh();
     } else {
-      setErrorMsg('Access denied: You do not have administrator privileges.');
-      setLoading(false);
+     window.Location.href ='/';
       router.refresh();
     } 
   } catch (err: any) {
