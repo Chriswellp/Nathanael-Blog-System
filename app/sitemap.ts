@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Production URL strictly forced for Google Search Console indexing
   const baseUrl = 'https://nathanael-blog-system-44yf.vercel.app';
 
   // Static routes
