@@ -95,20 +95,15 @@ const handleLogin = async (e: React.FormEvent) => {
       return;
     }
 
-
-
     const user = data.user;
     const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
     // Explicit Admin Check
     const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
 
     if (isAdmin) {
-
       window.location.href = '/?redirect=admin';
-      router.refresh();
     } else {
-     window.Location.href ='/';
-      router.refresh();
+      window.location.href = '/';
     } 
   } catch (err: any) {
     console.error('Login error:', err);
@@ -117,7 +112,6 @@ const handleLogin = async (e: React.FormEvent) => {
     setLoading(false);
   }
 };
-
 
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
