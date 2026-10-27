@@ -50,9 +50,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "OnbkyHyfbc5pDYHq9cxdoeofQXzU0Rjaah2pB3Cpifo",
-    other: {
-      "msvalidate.01": ["5F4FE391BD2E0F10B15B36BCA6A9BCC6"],
-    },
   },
 };
 
@@ -81,6 +78,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/* Direct Bing Meta Tag Verification */}
+        <meta name="msvalidate.01" content="5F4FE391BD2E0F10B15B36BCA6A9BCC6" />
+        
+        {/* JSON-LD Organization Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
