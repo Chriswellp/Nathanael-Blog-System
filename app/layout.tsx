@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nathanael-blog-system-44yf.vercel.app"),
+  metadataBase: new URL("https://www.socialworkeracrossborders.co.uk"),
   title: {
     default: "Social Work Across Borders | Global Social Work & Transformation",
     template: "%s | Social Work Across Borders",
@@ -33,12 +33,26 @@ export const metadata: Metadata = {
     "Cross Border Support",
   ],
   authors: [{ name: "Nathanael Maradza" }],
+  // Explicit Icon declarations for Google Search and web browsers
+  icons: {
+    icon: "/favicon.ico", // or /icon.png (min 48x48px, ideally 192x192px)
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Social Work Across Borders | Global Social Work & Transformation",
     description:
       "Bridging communities, cross-border social work initiatives, and driving global social transformation worldwide.",
-    url: "https://nathanael-blog-system-44yf.vercel.app",
+    url: "https://www.socialworkeracrossborders.co.uk",
     siteName: "Social Work Across Borders",
+    images: [
+      {
+        url: "/og-image.png", // Recommended: 1200x630px social preview image
+        width: 1200,
+        height: 630,
+        alt: "Social Work Across Borders",
+      },
+    ],
     type: "website",
     locale: "en_US",
   },
@@ -47,6 +61,7 @@ export const metadata: Metadata = {
     title: "Social Work Across Borders | Global Social Work & Transformation",
     description:
       "Bridging communities, cross-border social work initiatives, and driving global social transformation worldwide.",
+    images: ["/og-image.png"],
   },
   verification: {
     google: "OnbkyHyfbc5pDYHq9cxdoeofQXzU0Rjaah2pB3Cpifo",
@@ -62,8 +77,9 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Social Work Across Borders",
-    alternateName: "SWAB",
-    url: "https://nathanael-blog-system-44yf.vercel.app",
+    alternateName: ["SWAB", "Social Worker Across Borders"],
+    url: "https://www.socialworkeracrossborders.co.uk",
+    logo: "https://www.socialworkeracrossborders.co.uk/icon.png", // Helps Google associate your logo with search results
     founder: {
       "@type": "Person",
       name: "Nathanael Maradza",
