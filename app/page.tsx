@@ -48,7 +48,35 @@ function SearchParamsHandler({ setActivePage }: { setActivePage: (page: string) 
 export default function MainPage() {
   const [activePage, setActivePage] = useState('home');
   const [user, setUser] = useState<User | null>(null);
+  const [initialHero, setInitialHero] = useState<any>(null);
+  const [initialCards, setInitialCards] = useState<any[]>([]);
   const router = useRouter();
+
+  // Parallel pre-fetch of home data to eliminate rendering lag
+  useEffect(() => {
+    async function loadHomeContent() {
+      try {
+        const [heroRes, cardsRes] = await Promise.all([
+          fetch('/api/home-content/hero', { cache: 'no-store' }),
+          fetch('/api/home-content/card', { cache: 'no-store' }),
+        ]);
+
+        if (heroRes.ok) {
+          const heroData = await heroRes.json();
+          setInitialHero(heroData.data || heroData);
+        }
+
+        if (cardsRes.ok) {
+          const cardsData = await cardsRes.json();
+          setInitialCards(Array.isArray(cardsData) ? cardsData : cardsData.data || []);
+        }
+      } catch (err) {
+        console.error('Error pre-fetching home data:', err);
+      }
+    }
+
+    loadHomeContent();
+  }, []);
 
   useEffect(() => {
     // Initial session retrieval (Does not block guest access)
@@ -80,7 +108,13 @@ export default function MainPage() {
       <Navbar activePage={activePage} setActivePage={setActivePage} user={user} />
 
       <main className="flex-1 bg-slate-100">
-        {activePage === 'home' && <Home setActivePage={setActivePage} />}
+        {activePage === 'home' && (
+          <Home
+            setActivePage={setActivePage}
+            initialHero={initialHero}
+            initialCards={initialCards}
+          />
+        )}
         {activePage === 'about' && <AboutSection setActivePage={setActivePage} />}
         {activePage === 'swab' && <SwabHubSection setActivePage={setActivePage} />}
         {activePage === 'blog' && <BlogSection setActivePage={setActivePage} user={user} />}

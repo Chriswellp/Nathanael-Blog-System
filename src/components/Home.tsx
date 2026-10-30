@@ -30,6 +30,8 @@ export interface HomeHeroData {
 
 interface HomeProps {
   setActivePage: (page: string) => void;
+  initialHero?: any;
+  initialCards?: HomePillarCard[];
 }
 
 // Fallback pillars to show while loading or on error
@@ -227,13 +229,28 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
   );
 }
 
-export default function Home({ setActivePage }: HomeProps) {
-  const [pillars, setPillars] = useState<HomePillarCard[]>(defaultPillars);
-  const [hero, setHero] = useState<HomeHeroData>(fallbackHero);
+export default function Home({ setActivePage, initialHero, initialCards }: HomeProps) {
+  const [pillars, setPillars] = useState<HomePillarCard[]>(() => {
+    if (initialCards && initialCards.length > 0) {
+      return initialCards
+        .map((card: any) => ({
+          ...card,
+          desc: card.desc || card.description || '',
+          link_anchor: card.link_anchor || sluggifyTitle(card.title),
+        }))
+        .filter((p: HomePillarCard) => p.is_visible !== false);
+    }
+    return defaultPillars;
+  });
+
+  const [hero, setHero] = useState<HomeHeroData>(initialHero || fallbackHero);
   const [selectedPillar, setSelectedPillar] = useState<HomePillarCard | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    // If props were already provided by the server/parent fetch, skip duplicate client fetch
+    if (initialHero && initialCards && initialCards.length > 0) return;
+
     const fetchHomeContent = async () => {
       try {
         const [heroRes, cardsRes] = await Promise.all([
@@ -271,7 +288,7 @@ export default function Home({ setActivePage }: HomeProps) {
     };
 
     fetchHomeContent();
-  }, []);
+  }, [initialHero, initialCards]);
 
   const preventDownloadContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
