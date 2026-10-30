@@ -32,6 +32,7 @@ interface HomeProps {
   setActivePage: (page: string) => void;
 }
 
+// Fallback pillars to show while loading or on error
 const defaultPillars: HomePillarCard[] = [
   {
     id: 'blog',
@@ -89,6 +90,7 @@ const defaultPillars: HomePillarCard[] = [
   },
 ];
 
+// Fallback hero data
 const fallbackHero: HomeHeroData = {
   badgeText: 'Social Work Across Borders (SWAB)',
   authorName: 'Nathanael Maradza',
@@ -101,6 +103,9 @@ const fallbackHero: HomeHeroData = {
   cardDescription: 'Connecting Practice, Research and Lived Experience Across Africa and England.',
 };
 
+/**
+ * Autoplay video component triggered when scrolled into view
+ */
 function ScrollAutoplayVideo({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -142,6 +147,9 @@ function ScrollAutoplayVideo({ src }: { src: string }) {
   );
 }
 
+/**
+ * Modern Interactive Photo Slideshow Component
+ */
 function ImageSlideshow({ images }: { images: { url: string; title: string; caption: string }[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -150,7 +158,7 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
     if (isPaused || images.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
+    }, 4500);
     return () => clearInterval(interval);
   }, [isPaused, images.length]);
 
@@ -158,7 +166,7 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
 
   return (
     <div 
-      className="relative w-full max-w-6xl mx-auto h-[380px] sm:h-[480px] rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#050b14] group"
+      className="relative w-full max-w-6xl mx-auto h-80 sm:h-[460px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 bg-[#071326] group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -174,13 +182,13 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
             alt={img.title}
             className="w-full h-full object-cover object-top select-none pointer-events-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050b14] via-[#050b14]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071326] via-[#071326]/30 to-transparent" />
 
-          <div className="absolute bottom-0 inset-x-0 p-6 sm:p-12 text-white space-y-2">
-            <span className="text-amber-400 font-serif font-bold text-2xl sm:text-3xl tracking-wide block drop-shadow-md">
+          <div className="absolute bottom-0 inset-x-0 p-6 sm:p-10 text-white space-y-1">
+            <span className="text-amber-400 font-serif font-bold text-xl sm:text-3xl tracking-wide block drop-shadow">
               {img.title}
             </span>
-            <p className="text-slate-300 text-xs sm:text-sm font-light max-w-2xl leading-relaxed">
+            <p className="text-slate-200 text-xs sm:text-sm font-light max-w-2xl leading-relaxed">
               {img.caption}
             </p>
           </div>
@@ -189,7 +197,7 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
 
       <button
         onClick={() => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 bg-slate-900/80 hover:bg-amber-500 text-white hover:text-slate-950 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition border border-white/20 shadow-xl cursor-pointer opacity-0 group-hover:opacity-100 active:scale-95"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-slate-950/70 hover:bg-amber-500 text-white hover:text-slate-950 w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg transition border border-white/20 shadow-xl cursor-pointer opacity-0 group-hover:opacity-100 active:scale-90"
         aria-label="Previous slide"
       >
         &#10094;
@@ -197,7 +205,7 @@ function ImageSlideshow({ images }: { images: { url: string; title: string; capt
 
       <button
         onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 bg-slate-900/80 hover:bg-amber-500 text-white hover:text-slate-950 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition border border-white/20 shadow-xl cursor-pointer opacity-0 group-hover:opacity-100 active:scale-95"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-slate-950/70 hover:bg-amber-500 text-white hover:text-slate-950 w-11 h-11 rounded-full flex items-center justify-center font-bold text-lg transition border border-white/20 shadow-xl cursor-pointer opacity-0 group-hover:opacity-100 active:scale-90"
         aria-label="Next slide"
       >
         &#10095;
@@ -285,190 +293,191 @@ export default function Home({ setActivePage }: HomeProps) {
     }));
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-900 selection:bg-amber-400 selection:text-slate-950 font-sans">
+    <div className="bg-[#f2f4f8] min-h-screen text-slate-800 selection:bg-amber-400 selection:text-slate-950">
       
-      {/* ================= HERO SECTION (PREMIUM DARK GRADIENT) ================= */}
-      <section className="bg-gradient-to-b from-[#070e18] via-[#0b172a] to-[#0f172a] text-white pt-16 pb-28 relative overflow-hidden">
-        {/* Subtle glow effects */}
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 relative z-10">
+      {/* CLASSIC HERO HEADER & QUICK PORTAL SEARCH */}
+      <section className="bg-[#2d3748] text-white pt-12 pb-20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
           
-          {/* FLOATING PREMIUM SEARCH BAR BANNER */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-900 border border-slate-200/80 max-w-4xl mx-auto backdrop-blur-md">
-            <div className="flex flex-col md:flex-row gap-3 items-center">
-              <div className="relative w-full">
-                <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                  🔍
-                </span>
-                <input
-                  type="text"
-                  placeholder="Search topics, publications, systems, or safeguard tools..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-11 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium transition"
-                />
-              </div>
+          {/* FLOATING ACTION BANNER */}
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-2xl text-slate-900 border border-slate-100 max-w-5xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-bold font-serif mb-4 text-[#1a202c]">
+              Explore Practice Areas & Research
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <input
+                type="text"
+                placeholder="Search topics, publications, or safeguard tools..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-5 py-3.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+              />
               <button
                 onClick={() => handleCrossPageNav('blog')}
-                className="w-full md:w-auto bg-[#f97316] hover:bg-[#ea580c] text-white px-8 py-4 rounded-2xl font-bold text-sm tracking-wide transition-all shadow-lg shadow-orange-500/20 shrink-0 cursor-pointer active:scale-95"
+                className="w-full sm:w-auto bg-[#e85d04] hover:bg-[#d00000] text-white px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all shadow-md shrink-0 cursor-pointer"
               >
                 Search Portal
               </button>
               <button
                 onClick={() => handleCrossPageNav('swab')}
-                className="w-full md:w-auto bg-slate-100 hover:bg-slate-200 text-slate-800 px-7 py-4 rounded-2xl font-bold text-sm transition-all shrink-0 cursor-pointer text-center"
+                className="w-full sm:w-auto border border-slate-300 hover:border-amber-500 text-slate-700 hover:text-amber-600 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shrink-0 cursor-pointer text-center"
               >
                 Explore SWAB
               </button>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-slate-500 items-center pt-2 border-t border-slate-100">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Trending:</span>
-              <button onClick={() => handleCrossPageNav('swab')} className="hover:text-amber-600 transition underline">Cross-Border Policy</button>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500 items-center">
+              <span className="text-slate-400">Popular Searches:</span>
+              <button onClick={() => handleCrossPageNav('swab')} className="hover:text-amber-600 underline">Cross-Border Policy</button>
               <span>•</span>
-              <button onClick={() => handleCrossPageNav('publications')} className="hover:text-amber-600 transition underline">Research Papers</button>
+              <button onClick={() => handleCrossPageNav('publications')} className="hover:text-amber-600 underline">Research Papers</button>
               <span>•</span>
-              <button onClick={() => handleCrossPageNav('speaking')} className="hover:text-amber-600 transition underline">Keynote Talks</button>
+              <button onClick={() => handleCrossPageNav('speaking')} className="hover:text-amber-600 underline">Keynote Talks</button>
               <span>•</span>
-              <button onClick={() => handleCrossPageNav('resources')} className="hover:text-amber-600 transition underline">Safeguarding</button>
+              <button onClick={() => handleCrossPageNav('resources')} className="hover:text-amber-600 underline">Safeguarding</button>
             </div>
           </div>
 
-          {/* HERO CONTENT GRID */}
-          <div className="grid md:grid-cols-12 gap-12 items-center max-w-6xl mx-auto pt-6">
-            
-            <div className="md:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-500/10 border border-amber-400/30 text-amber-400 text-xs font-bold tracking-widest uppercase rounded-full shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          {/* MAIN HERO CARD GRID */}
+          <div className="grid md:grid-cols-2 gap-10 items-center max-w-6xl mx-auto pt-6">
+            <div className="space-y-6">
+              <div className="inline-block px-4 py-1.5 bg-amber-500/20 border border-amber-400/40 text-amber-400 text-xs font-bold tracking-widest uppercase rounded-full shadow-sm">
                 {hero.badgeText || fallbackHero.badgeText}
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.1] text-white tracking-tight">
+              <h1 className="text-4xl lg:text-5xl font-bold font-serif leading-tight text-white tracking-tight">
                 {hero.authorName || fallbackHero.authorName}
               </h1>
 
-              <p className="text-amber-400 text-lg sm:text-xl font-medium tracking-wide">
+              <p className="text-amber-400 text-lg font-medium tracking-wide">
                 {hero.tagline || fallbackHero.tagline}
               </p>
 
-              <blockquote className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl italic border-l-4 border-amber-400 pl-5 py-1 font-light">
+              <blockquote className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg italic border-l-2 border-amber-400/80 pl-4 py-1">
                 {hero.quote || fallbackHero.quote}
               </blockquote>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap gap-3 sm:gap-4 pt-2">
                 <button
                   onClick={() => handleCrossPageNav('about', 'professional-journey-vision')} 
-                  className="bg-[#f97316] hover:bg-[#ea580c] text-white px-8 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-xl shadow-orange-500/20 transition-all active:scale-95 cursor-pointer"
+                  className="bg-[#e85d04] text-white px-7 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-[#dc2f02] active:scale-95 transition-all shadow-lg cursor-pointer"
                 >
-                  Read Full Biography
+                  Read Biography
                 </button>
                 <button
                   onClick={() => handleCrossPageNav('contact')}
-                  className="bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-700 px-8 py-4 rounded-2xl font-bold text-sm tracking-wide transition-all active:scale-95 cursor-pointer backdrop-blur-sm"
+                  className="bg-slate-800 text-white border border-slate-600 px-7 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-slate-700 active:scale-95 transition-all cursor-pointer"
                 >
                   Get In Touch
                 </button>
               </div>
             </div>
 
-            {/* BRAND LOGO CARD */}
-            <div className="md:col-span-5 bg-gradient-to-b from-[#111c30] to-[#09101d] p-8 sm:p-10 rounded-3xl border border-slate-800 shadow-2xl flex flex-col justify-center items-center text-center relative group">
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-              
-              <div className="w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center shrink-0 mb-6 group-hover:scale-105 transition duration-500">
+            {/* EMBEDDED BRAND LOGO DISPLAY CARD */}
+            <div className="bg-[#1a202c] p-8 sm:p-10 rounded-3xl border border-slate-700 shadow-2xl flex flex-col justify-center items-center text-center hover:border-amber-500/50 transition duration-300 relative group">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center shrink-0 mb-4 group-hover:scale-105 transition duration-500">
                 <img
                   src={hero.logoUrl || fallbackHero.logoUrl}
                   alt="Nathanael Maradza Logo"
                   onContextMenu={preventDownloadContextMenu}
-                  className="w-full h-full object-contain select-none pointer-events-none drop-shadow-2xl"
+                  className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xl"
                 />
               </div>
 
               <h2 className="text-xl font-bold font-serif text-white tracking-wide">
                 {hero.cardTitle || fallbackHero.cardTitle}
               </h2>
-              <div className="w-12 h-1 bg-amber-400 my-3 rounded-full"></div>
-              <p className="text-amber-400 text-[11px] uppercase tracking-widest font-bold mb-3">
+              <div className="w-16 h-1 bg-amber-400 my-3 rounded-full"></div>
+              <p className="text-amber-400 text-xs uppercase tracking-widest font-semibold mb-3">
                 {hero.cardSubtitle || fallbackHero.cardSubtitle}
               </p>
               <p className="text-xs text-slate-300 italic max-w-xs leading-relaxed">
                 {hero.cardDescription || fallbackHero.cardDescription}
               </p>
             </div>
-
           </div>
 
-          {/* STATS BAR */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 max-w-5xl mx-auto border-t border-slate-800 text-center">
+          {/* STATS / HIGHLIGHT BAR */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 max-w-5xl mx-auto border-t border-slate-700/80 text-center">
             <div className="space-y-1">
-              <span className="text-3xl font-extrabold text-amber-400">10+</span>
-              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Years Experience</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">10+ Years</span>
+              <p className="text-xs text-slate-300 font-medium">Practice & Field Experience</p>
             </div>
             <div className="space-y-1">
-              <span className="text-3xl font-extrabold text-amber-400">2 Regions</span>
-              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Africa & England</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">2 Regions</span>
+              <p className="text-xs text-slate-300 font-medium">Africa & England Alignment</p>
             </div>
             <div className="space-y-1">
-              <span className="text-3xl font-extrabold text-amber-400">100%</span>
-              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Child-Centered</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">100%</span>
+              <p className="text-xs text-slate-300 font-medium">Child-Centered Practice</p>
             </div>
             <div className="space-y-1">
-              <span className="text-3xl font-extrabold text-amber-400">Global</span>
-              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Impact & Exchange</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">Global</span>
+              <p className="text-xs text-slate-300 font-medium">Knowledge & Exchange</p>
             </div>
           </div>
 
         </div>
       </section>
 
-      {/* ================= 3-COLUMN STRUCTURED NAVIGATION CARDS ================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20 mb-20">
+      {/* "HOW CAN WE HELP?" CLASSIC NAVIGATION CARDS SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a202c] tracking-tight">
+            How Can We Assist Your Organization?
+          </h2>
+          <div className="w-16 h-1 bg-[#e85d04] mx-auto my-3 rounded-full"></div>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8">
           
-          <div className="bg-[#111c30] text-white p-8 rounded-3xl shadow-xl flex flex-col justify-between border border-slate-800 hover:border-amber-500/50 transition duration-300">
+          {/* CARD 1 */}
+          <div className="bg-[#2d3748] text-white p-8 rounded-2xl shadow-xl flex flex-col justify-between hover:-translate-y-1 transition duration-300 border border-slate-700">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 block mb-3">Practice & Research</span>
-              <h3 className="text-2xl font-bold font-serif mb-4 leading-snug">Academic Research & Policy Analysis</h3>
-              <p className="text-slate-300 text-sm leading-relaxed mb-8">
+              <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block mb-2">Practice & Research</span>
+              <h3 className="text-2xl font-bold font-serif mb-3">Academic Research & Policy Analysis</h3>
+              <p className="text-slate-300 text-sm leading-relaxed mb-6">
                 Evidence-based studies, comparative cross-border policy analysis, and statutory frameworks evaluation.
               </p>
             </div>
             <button
               onClick={() => handleCrossPageNav('publications')}
-              className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center shadow-md"
+              className="w-full bg-[#e85d04] hover:bg-[#dc2f02] text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
             >
               Explore Publications &rarr;
             </button>
           </div>
 
-          <div className="bg-white text-slate-900 p-8 rounded-3xl shadow-xl flex flex-col justify-between border border-slate-200 hover:border-amber-500/50 transition duration-300">
+          {/* CARD 2 */}
+          <div className="bg-white text-slate-900 p-8 rounded-2xl shadow-xl flex flex-col justify-between hover:-translate-y-1 transition duration-300 border border-slate-200">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#f97316] block mb-3">Keynote Talks</span>
-              <h3 className="text-2xl font-bold font-serif mb-4 leading-snug">Public Speaking & Guest Lectures</h3>
-              <p className="text-slate-600 text-sm leading-relaxed mb-8">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#e85d04] block mb-2">Keynote Talks</span>
+              <h3 className="text-2xl font-bold font-serif mb-3">Public Speaking & Guest Lectures</h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
                 Interactive international panels, training workshops, and guest lectures on systemic safeguarding.
               </p>
             </div>
             <button
               onClick={() => handleCrossPageNav('speaking')}
-              className="w-full bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 py-4 rounded-2xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
+              className="w-full border-2 border-[#e85d04] text-[#e85d04] hover:bg-[#e85d04] hover:text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
             >
               Book Keynote Talk &rarr;
             </button>
           </div>
 
-          <div className="bg-white text-slate-900 p-8 rounded-3xl shadow-xl flex flex-col justify-between border border-slate-200 hover:border-amber-500/50 transition duration-300">
+          {/* CARD 3 */}
+          <div className="bg-white text-slate-900 p-8 rounded-2xl shadow-xl flex flex-col justify-between hover:-translate-y-1 transition duration-300 border border-slate-200">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#f97316] block mb-3">SWAB Network</span>
-              <h3 className="text-2xl font-bold font-serif mb-4 leading-snug">Social Work Across Borders</h3>
-              <p className="text-slate-600 text-sm leading-relaxed mb-8">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#e85d04] block mb-2">SWAB Network</span>
+              <h3 className="text-2xl font-bold font-serif mb-3">Social Work Across Borders</h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
                 Connecting global practitioners, researchers, and lived experience to improve outcomes for children.
               </p>
             </div>
             <button
               onClick={() => handleCrossPageNav('swab')}
-              className="w-full bg-[#0b172a] hover:bg-slate-800 text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
+              className="w-full bg-[#1a202c] hover:bg-[#2d3748] text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
             >
               Learn About SWAB &rarr;
             </button>
@@ -477,15 +486,15 @@ export default function Home({ setActivePage }: HomeProps) {
         </div>
       </section>
 
-      {/* ================= FEATURED PHOTO SLIDESHOW GALLERY ================= */}
+      {/* FEATURED PHOTO SLIDESHOW GALLERY */}
       {galleryImages.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-16">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-3xl font-bold font-serif text-slate-900 tracking-tight">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#1a202c] tracking-tight">
               Impact & Fieldwork Gallery
             </h2>
-            <div className="w-16 h-1 bg-[#f97316] mx-auto my-3 rounded-full"></div>
-            <p className="text-slate-600 text-sm">
+            <div className="w-16 h-1 bg-[#e85d04] mx-auto my-2.5 rounded-full"></div>
+            <p className="text-slate-600 text-xs sm:text-sm">
               Visual highlights from global practice exchanges, keynote talks, and research partnerships.
             </p>
           </div>
@@ -494,30 +503,30 @@ export default function Home({ setActivePage }: HomeProps) {
         </section>
       )}
 
-      {/* ================= CORE PILLARS SECTION ================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-20">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mb-4 tracking-tight">
+      {/* CORE PILLARS SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a202c] mb-3 tracking-tight">
             Focus Areas & Practice Pillars
           </h2>
-          <div className="w-20 h-1 bg-[#f97316] mx-auto mb-4 rounded-full"></div>
-          <p className="text-slate-600 text-base">
+          <div className="w-20 h-1 bg-[#e85d04] mx-auto mb-4 rounded-full"></div>
+          <p className="text-slate-600 text-sm sm:text-base">
             Bridging international policy, academic research, and grassroots field experience.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {pillars.map((pillar) => {
             const cardDescription = pillar.desc || pillar.description || '';
 
             return (
               <div
                 key={pillar.id}
-                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                className="bg-white rounded-2xl border border-slate-200/80 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between overflow-hidden group hover:border-[#e85d04]"
               >
                 <div>
                   {pillar.media_type === 'image' && pillar.media_url && (
-                    <div className="w-full aspect-[16/10] bg-[#071326] relative overflow-hidden">
+                    <div className="w-full aspect-[4/3] bg-[#071326] relative overflow-hidden">
                       <img
                         src={pillar.media_url}
                         alt={pillar.title}
@@ -528,7 +537,7 @@ export default function Home({ setActivePage }: HomeProps) {
                   )}
 
                   {pillar.media_type === 'video' && pillar.media_url && (
-                    <div className="w-full aspect-[16/10] bg-[#071326] relative overflow-hidden">
+                    <div className="w-full aspect-[4/3] bg-[#071326] relative overflow-hidden">
                       {pillar.media_url.includes('youtube.com') || pillar.media_url.includes('youtu.be') ? (
                         <iframe
                           src={pillar.media_url}
@@ -543,15 +552,15 @@ export default function Home({ setActivePage }: HomeProps) {
                   )}
 
                   {(!pillar.media_type || pillar.media_type === 'none') && (
-                    <div className="w-full aspect-[16/9] bg-gradient-to-br from-[#0b172a] to-[#1e293b] flex items-center justify-center p-6 text-amber-400">
+                    <div className="w-full aspect-[16/9] bg-gradient-to-br from-[#2d3748] to-[#1a202c] flex items-center justify-center p-6 text-amber-400">
                       <span className="text-6xl transform group-hover:scale-110 transition-transform duration-300">
                         {pillar.icon || '📖'}
                       </span>
                     </div>
                   )}
 
-                  <div className="p-8 space-y-3">
-                    <h3 className="text-xl sm:text-2xl font-bold font-serif text-slate-900 tracking-tight leading-snug">
+                  <div className="p-6 sm:p-8 space-y-3">
+                    <h3 className="text-xl sm:text-2xl font-bold font-serif text-[#1a202c] tracking-tight leading-snug">
                       {pillar.title}
                     </h3>
 
@@ -561,12 +570,12 @@ export default function Home({ setActivePage }: HomeProps) {
                   </div>
                 </div>
 
-                <div className="px-8 pb-8 pt-2">
+                <div className="px-6 pb-6 sm:px-8 sm:pb-8 pt-2">
                   <button
                     onClick={() => setSelectedPillar({ ...pillar, desc: cardDescription })}
-                    className="bg-slate-100 hover:bg-[#0b172a] hover:text-white text-slate-800 font-bold text-xs uppercase tracking-wider px-6 py-4 rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer w-full text-center border border-slate-200"
+                    className="bg-[#2d3748] hover:bg-[#1a202c] text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer w-full text-center border border-slate-700 group-hover:border-amber-500"
                   >
-                    Find Out More &rarr;
+                    Find Out More
                   </button>
                 </div>
               </div>
@@ -575,7 +584,7 @@ export default function Home({ setActivePage }: HomeProps) {
         </div>
       </section>
 
-      {/* ================= MODAL POPUP ================= */}
+      {/* MODAL POPUP */}
       {selectedPillar && (
         <div
           className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
@@ -587,14 +596,14 @@ export default function Home({ setActivePage }: HomeProps) {
           >
             <button
               onClick={() => setSelectedPillar(null)}
-              className="absolute top-4 right-4 z-30 bg-slate-900/80 text-white hover:bg-slate-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition cursor-pointer shadow-lg border border-slate-700"
+              className="absolute top-4 right-4 z-30 bg-[#1a202c]/80 text-white hover:bg-[#1a202c] w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition cursor-pointer shadow-lg border border-slate-700"
             >
               ✕
             </button>
 
-            <div className="shrink-0 w-full bg-[#0b172a]">
+            <div className="shrink-0 w-full bg-[#1a202c]">
               {selectedPillar.media_type === 'image' && selectedPillar.media_url && (
-                <div className="w-full h-64 sm:h-72 relative overflow-hidden">
+                <div className="w-full h-56 sm:h-72 relative overflow-hidden">
                   <img
                     src={selectedPillar.media_url}
                     alt={selectedPillar.title}
@@ -605,7 +614,7 @@ export default function Home({ setActivePage }: HomeProps) {
               )}
 
               {selectedPillar.media_type === 'video' && selectedPillar.media_url && (
-                <div className="w-full h-64 sm:h-72 relative overflow-hidden">
+                <div className="w-full h-56 sm:h-72 relative overflow-hidden">
                   {selectedPillar.media_url.includes('youtube.com') || selectedPillar.media_url.includes('youtu.be') ? (
                     <iframe
                       src={selectedPillar.media_url}
@@ -630,18 +639,18 @@ export default function Home({ setActivePage }: HomeProps) {
               )}
 
               {(!selectedPillar.media_type || selectedPillar.media_type === 'none') && (
-                <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-[#0b172a] to-[#1e293b] flex items-center justify-center p-6 text-amber-400">
+                <div className="w-full h-36 sm:h-48 bg-gradient-to-br from-[#2d3748] to-[#1a202c] flex items-center justify-center p-6 text-amber-400">
                   <span className="text-6xl sm:text-7xl">{selectedPillar.icon || '📖'}</span>
                 </div>
               )}
             </div>
 
             <div className="p-6 sm:p-8 space-y-4 overflow-y-auto flex-1 text-slate-800">
-              <h3 className="text-2xl sm:text-3xl font-bold font-serif text-slate-900 tracking-tight leading-snug">
+              <h3 className="text-2xl sm:text-3xl font-bold font-serif text-[#1a202c] tracking-tight leading-snug">
                 {selectedPillar.title}
               </h3>
 
-              <div className="w-16 h-1 bg-[#f97316] rounded-full"></div>
+              <div className="w-16 h-1 bg-[#e85d04] rounded-full"></div>
 
               <div className="text-slate-700 text-sm sm:text-base leading-relaxed space-y-3 whitespace-pre-line">
                 {selectedPillar.desc || selectedPillar.description}
@@ -657,7 +666,7 @@ export default function Home({ setActivePage }: HomeProps) {
             <div className="p-4 sm:px-8 border-t border-stone-200 bg-stone-50 flex justify-end gap-3 shrink-0">
               <button
                 onClick={() => setSelectedPillar(null)}
-                className="px-6 py-3 rounded-2xl text-xs font-bold bg-stone-200 hover:bg-stone-300 text-slate-700 cursor-pointer transition"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-stone-200 hover:bg-stone-300 text-slate-700 cursor-pointer transition"
               >
                 Close
               </button>
@@ -692,7 +701,7 @@ export default function Home({ setActivePage }: HomeProps) {
                   
                   handleCrossPageNav(targetPage, targetSectionId);
                 }}
-                className="px-8 py-3 rounded-2xl text-xs font-bold bg-[#f97316] hover:bg-[#ea580c] text-white uppercase tracking-wider cursor-pointer shadow-lg transition"
+                className="px-6 py-2.5 rounded-xl text-xs font-bold bg-[#e85d04] hover:bg-[#dc2f02] text-white uppercase tracking-wider cursor-pointer shadow transition"
               >
                 Go to Section &rarr;
               </button>
@@ -701,22 +710,22 @@ export default function Home({ setActivePage }: HomeProps) {
         </div>
       )}
 
-      {/* ================= BOTTOM CALL TO ACTION ================= */}
-      <section className="bg-[#070e18] text-white py-16 border-t border-slate-800 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-          <div className="text-center md:text-left space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-serif font-bold text-amber-400">
+      {/* BOTTOM CALL TO ACTION */}
+      <section className="bg-[#1a202c] text-white py-14 border-t-4 border-[#e85d04] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="text-center md:text-left space-y-1">
+            <h3 className="text-2xl font-serif font-bold text-amber-400">
               Interested in Collaboration or Keynote Speaking?
             </h3>
-            <p className="text-slate-300 text-sm max-w-2xl">
-              Reach out to discuss international panel talks, academic research, or cross-border practice exchanges.
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
+              Reach out to discuss international panel talks, academic research, or practice exchanges.
             </p>
           </div>
           <button
             onClick={() => handleCrossPageNav('contact')}
-            className="bg-[#f97316] hover:bg-[#ea580c] text-white px-9 py-4 rounded-2xl font-bold text-xs uppercase tracking-wider transition shadow-xl shadow-orange-500/20 cursor-pointer whitespace-nowrap active:scale-95"
+            className="bg-[#e85d04] hover:bg-[#dc2f02] text-white px-8 py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition shadow-lg cursor-pointer whitespace-nowrap active:scale-95"
           >
-            Get In Touch Today
+            Get In Touch
           </button>
         </div>
       </section>
