@@ -139,20 +139,8 @@ export default function LoginPageContent() {
     const targetEmail = resetEmailInput.trim().toLowerCase();
 
     try {
-      // Check if email exists in public profiles table
-      const { data: profile, error: profileErr } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .eq('email', targetEmail)
-        .maybeSingle();
-
-      if (profileErr || !profile) {
-        setForgotErrorMsg('No registered account was found with this email address.');
-        setVerifyLoading(false);
-        return;
-      }
-
-      // Email exists! Trigger reset email
+      // Trigger Supabase password reset directly
+      // Supabase's built-in function safely triggers the email if it exists
       const { error } = await supabase.auth.resetPasswordForEmail(targetEmail, {
         redirectTo: `${window.location.origin}/login`,
       });
@@ -163,12 +151,14 @@ export default function LoginPageContent() {
         return;
       }
 
-      setForgotSuccessMsg('Password reset link sent! Check your email inbox to proceed.');
+      // Success message (Supabase returns success even if email isn't found for security, 
+      // but if successful, it will dispatch the email to valid accounts)
+      setForgotSuccessMsg('If this email is registered, a password reset link has been sent to your inbox.');
       setTimeout(() => {
         setShowForgotPasswordModal(false);
         setResetEmailInput('');
         setForgotSuccessMsg('');
-      }, 3000);
+      }, 4000);
     } catch (err) {
       console.error('Verification error:', err);
       setForgotErrorMsg('Something went wrong. Please try again.');
