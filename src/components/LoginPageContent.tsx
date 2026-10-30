@@ -27,6 +27,7 @@ export default function LoginPageContent() {
   const [resetEmailInput, setResetEmailInput] = useState('');
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [forgotErrorMsg, setForgotErrorMsg] = useState('');
+  const [forgotSuccessMsg, setForgotSuccessMsg] = useState('');
 
   // --- IN-APP NEW PASSWORD DIALOG STATES ---
   const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
@@ -76,52 +77,82 @@ export default function LoginPageContent() {
     fetchStatuses();
   }, []);
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setErrorMsg('');
-
-  const cleanEmail = email ? email.trim().toLowerCase() : '';
-
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: cleanEmail,
-      password,
+  // AUTOMATIC RECOVERY DETECTION: Open New Password modal when landing from email reset link
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        if (session?.user?.email) {
+          setVerifiedEmailForReset(session.user.email);
+        }
+        setShowNewPasswordModal(true);
+      }
     });
 
-    if (error) {
-      setErrorMsg(error.message);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+
+    const cleanEmail = email ? email.trim().toLowerCase() : '';
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
+
+      if (error) {
+        setErrorMsg(error.message);
+        setLoading(false);
+        return;
+      }
+
+      const user = data.user;
+      const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
+      const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
+
+      if (isAdmin) {
+        window.location.href = '/?redirect=admin';
+      } else {
+        window.location.href = '/';
+      } 
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
+    } finally {
       setLoading(false);
-      return;
     }
+  };
 
-    const user = data.user;
-    const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
-    // Explicit Admin Check
-    const isAdmin = cleanEmail === 'admin@nathanael.com' || userRole === 'admin';
-
-    if (isAdmin) {
-      window.location.href = '/?redirect=admin';
-    } else {
-      window.location.href = '/';
-    } 
-  } catch (err: any) {
-    console.error('Login error:', err);
-    setErrorMsg(err.message || 'An unexpected error occurred. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  // --- STEP 1: VERIFY EMAIL EXISTS IN DATABASE THEN SEND RESET LINK ---
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setVerifyLoading(true);
     setForgotErrorMsg('');
+    setForgotSuccessMsg('');
 
     const targetEmail = resetEmailInput.trim().toLowerCase();
 
     try {
-      // Trigger Supabase built-in password recovery email / verification
+      // Check if email exists in public profiles table
+      const { data: profile, error: profileErr } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .eq('email', targetEmail)
+        .maybeSingle();
+
+      if (profileErr || !profile) {
+        setForgotErrorMsg('No registered account was found with this email address.');
+        setVerifyLoading(false);
+        return;
+      }
+
+      // Email exists! Trigger reset email
       const { error } = await supabase.auth.resetPasswordForEmail(targetEmail, {
         redirectTo: `${window.location.origin}/login`,
       });
@@ -132,10 +163,12 @@ const handleLogin = async (e: React.FormEvent) => {
         return;
       }
 
-      setVerifiedEmailForReset(targetEmail);
-      setShowForgotPasswordModal(false);
-      setResetEmailInput('');
-      setShowNewPasswordModal(true);
+      setForgotSuccessMsg('Password reset link sent! Check your email inbox to proceed.');
+      setTimeout(() => {
+        setShowForgotPasswordModal(false);
+        setResetEmailInput('');
+        setForgotSuccessMsg('');
+      }, 3000);
     } catch (err) {
       console.error('Verification error:', err);
       setForgotErrorMsg('Something went wrong. Please try again.');
@@ -144,7 +177,7 @@ const handleLogin = async (e: React.FormEvent) => {
     }
   };
 
-  // --- STEP 2: UPDATE PASSWORD DIRECTLY IN SUPABASE ---
+  // --- STEP 2: UPDATE PASSWORD FOR RECOVERED SESSION ---
   const handleDirectPasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -162,25 +195,23 @@ const handleLogin = async (e: React.FormEvent) => {
     setUpdateSuccessMsg('');
 
     try {
-      const response = await fetch('/api/update-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: verifiedEmailForReset, newPassword }),
+      // Update authenticated recovery session password
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        setUpdateErrorMsg(result.error || 'Failed to update password.');
+      if (error) {
+        setUpdateErrorMsg(error.message);
       } else {
-        setUpdateSuccessMsg('Password successfully updated! Redirecting to login...');
+        setUpdateSuccessMsg('Password successfully updated! Redirecting...');
         setTimeout(() => {
           setShowNewPasswordModal(false);
           setNewPassword('');
           setConfirmNewPassword('');
           setUpdateSuccessMsg('');
           setVerifiedEmailForReset('');
-        }, 2500);
+          window.location.href = '/login';
+        }, 2000);
       }
     } catch (err) {
       console.error('Password update error:', err);
@@ -429,6 +460,7 @@ const handleLogin = async (e: React.FormEvent) => {
               onClick={() => {
                 setShowForgotPasswordModal(false);
                 setForgotErrorMsg('');
+                setForgotSuccessMsg('');
                 setResetEmailInput('');
               }}
               aria-label="Close modal"
@@ -440,13 +472,19 @@ const handleLogin = async (e: React.FormEvent) => {
             <div className="space-y-1">
               <h3 className="text-xl font-bold font-serif text-white">Reset Password</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Enter your registered email address to proceed with resetting your account password directly on this device.
+                Enter your registered email address. If an account exists, a password reset link will be sent to your inbox.
               </p>
             </div>
 
             {forgotErrorMsg && (
               <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl">
                 {forgotErrorMsg}
+              </div>
+            )}
+
+            {forgotSuccessMsg && (
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl">
+                {forgotSuccessMsg}
               </div>
             )}
 
@@ -472,6 +510,7 @@ const handleLogin = async (e: React.FormEvent) => {
                   onClick={() => {
                     setShowForgotPasswordModal(false);
                     setForgotErrorMsg('');
+                    setForgotSuccessMsg('');
                     setResetEmailInput('');
                   }}
                   className="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition cursor-pointer"
@@ -483,7 +522,7 @@ const handleLogin = async (e: React.FormEvent) => {
                   disabled={verifyLoading}
                   className="w-1/2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition disabled:opacity-50 cursor-pointer shadow"
                 >
-                  {verifyLoading ? 'Verifying...' : 'Next'}
+                  {verifyLoading ? 'Checking...' : 'Next'}
                 </button>
               </div>
             </form>
@@ -502,7 +541,7 @@ const handleLogin = async (e: React.FormEvent) => {
             <div className="space-y-1">
               <h3 className="text-xl font-bold font-serif text-white">Create New Password</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Enter and confirm a new secure password for <strong className="text-amber-400">{verifiedEmailForReset}</strong>.
+                Enter and confirm a new secure password {verifiedEmailForReset && <>for <strong className="text-amber-400">{verifiedEmailForReset}</strong></>}.
               </p>
             </div>
 
