@@ -384,9 +384,8 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
             </div>
 
             <div className="relative mx-auto w-full max-w-md">
-              <div className="absolute -inset-4 rounded-[2rem] border border-amber-300/20 rotate-3" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white p-8 text-center shadow-2xl shadow-slate-950/30 sm:p-10">
-                <div className="mx-auto mb-6 flex h-40 w-40 items-center justify-center rounded-3xl bg-slate-50 p-5 sm:h-48 sm:w-48">
+              <div className="relative overflow-hidden rounded-[1.75rem] border border-slate-100 bg-white p-8 text-center shadow-[0_24px_70px_rgba(2,12,27,0.28)] sm:p-10">
+                <div className="mx-auto mb-6 flex h-48 w-48 items-center justify-center sm:h-56 sm:w-56">
                   <img
                     src={hero.logoUrl || fallbackHero.logoUrl}
                     alt="Social Work Across Borders (SWAB)"
