@@ -19,9 +19,6 @@ export interface HomePillarCard {
 
 export interface HomeHeroData {
   badgeText?: string;
-  authorName?: string;
-  tagline?: string;
-  quote?: string;
   logoUrl?: string;
   cardTitle?: string;
   cardSubtitle?: string;
@@ -95,10 +92,6 @@ const defaultPillars: HomePillarCard[] = [
 // Fallback hero data
 const fallbackHero: HomeHeroData = {
   badgeText: 'Social Work Across Borders (SWAB)',
-  authorName: 'Nathanael Maradza',
-  tagline: 'Social Worker | Author | Speaker | Researcher',
-  quote:
-    '"My passion lies in connecting practice, research and lived experience across countries to improve outcomes for children, young people and families."',
   logoUrl: '/logo2.png',
   cardTitle: 'SOCIAL WORK ACROSS BORDERS',
   cardSubtitle: 'Different Countries. Shared Purpose. Better Outcomes for Children and Families.',
@@ -309,140 +302,172 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
       caption: p.desc || 'Social Work Across Borders field practice and research exchange.',
     }));
 
+  const visiblePillars = pillars.filter((pillar) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+    return `${pillar.title} ${pillar.desc || pillar.description || ''}`.toLowerCase().includes(query);
+  });
+
   return (
     <div className="bg-[#f2f4f8] min-h-screen text-slate-800 selection:bg-amber-400 selection:text-slate-950">
       
-      {/* CLASSIC HERO HEADER & QUICK PORTAL SEARCH */}
-      <section className="bg-[#2d3748] text-white pt-12 pb-20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
-          
-          {/* FLOATING ACTION BANNER */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-2xl text-slate-900 border border-slate-100 max-w-5xl mx-auto">
-            <h3 className="text-xl sm:text-2xl font-bold font-serif mb-4 text-[#1a202c]">
-              Explore Practice Areas & Research
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-3 items-center">
-              <input
-                type="text"
-                placeholder="Search topics, publications, or safeguard tools..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-5 py-3.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
+      {/* ORGANISATION-LED HERO */}
+      <section className="relative overflow-hidden bg-[#10243a] text-white">
+        <div className="absolute inset-0 opacity-30 pointer-events-none" aria-hidden="true">
+          <div className="absolute -top-40 -right-24 h-[34rem] w-[34rem] rounded-full bg-[#e85d04]/30 blur-3xl" />
+          <div className="absolute -bottom-48 -left-20 h-[30rem] w-[30rem] rounded-full bg-sky-500/20 blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] bg-[size:44px_44px]" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:pb-28 lg:px-8">
+          <div className="mb-14 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <img
+                src={hero.logoUrl || fallbackHero.logoUrl}
+                alt="Social Work Across Borders logo"
+                onContextMenu={preventDownloadContextMenu}
+                className="h-12 w-12 rounded-xl bg-white/10 object-contain p-1.5 ring-1 ring-white/15"
               />
-              <button
-                onClick={() => handleCrossPageNav('blog')}
-                className="w-full sm:w-auto bg-[#e85d04] hover:bg-[#d00000] text-white px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all shadow-md shrink-0 cursor-pointer"
-              >
-                Search Portal
-              </button>
-              <button
-                onClick={() => handleCrossPageNav('swab')}
-                className="w-full sm:w-auto border border-slate-300 hover:border-amber-500 text-slate-700 hover:text-amber-600 px-6 py-3.5 rounded-xl font-bold text-sm transition-all shrink-0 cursor-pointer text-center"
-              >
-                Explore SWAB
-              </button>
+              <div>
+                <p className="text-sm font-extrabold tracking-[0.16em] text-white">SWAB</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-300">Social Work Across Borders</p>
+              </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500 items-center">
-              <span className="text-slate-400">Popular Searches:</span>
-              <button onClick={() => handleCrossPageNav('swab')} className="hover:text-amber-600 underline">Cross-Border Policy</button>
-              <span>•</span>
-              <button onClick={() => handleCrossPageNav('publications')} className="hover:text-amber-600 underline">Research Papers</button>
-              <span>•</span>
-              <button onClick={() => handleCrossPageNav('speaking')} className="hover:text-amber-600 underline">Keynote Talks</button>
-              <span>•</span>
-              <button onClick={() => handleCrossPageNav('resources')} className="hover:text-amber-600 underline">Safeguarding</button>
-            </div>
+            <button
+              onClick={() => handleCrossPageNav('contact')}
+              className="rounded-full border border-white/25 px-4 py-2.5 text-xs font-bold text-white transition hover:border-amber-400 hover:bg-white/10 sm:px-5"
+            >
+              Contact SWAB <span aria-hidden="true">↗</span>
+            </button>
           </div>
 
-          {/* MAIN HERO CARD GRID */}
-          <div className="grid md:grid-cols-2 gap-10 items-center max-w-6xl mx-auto pt-6">
-            <div className="space-y-6">
-              <div className="inline-block px-4 py-1.5 bg-amber-500/20 border border-amber-400/40 text-amber-400 text-xs font-bold tracking-widest uppercase rounded-full shadow-sm">
-                {hero.badgeText || fallbackHero.badgeText}
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_.85fr]">
+            <div className="max-w-3xl space-y-7">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+                An international social work platform
               </div>
 
-              <h1 className="text-4xl lg:text-5xl font-bold font-serif leading-tight text-white tracking-tight">
-                {hero.authorName || fallbackHero.authorName}
-              </h1>
+              <div className="space-y-5">
+                <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+                  Social Work
+                  <span className="block text-amber-300">Across Borders.</span>
+                </h1>
+                <p className="max-w-2xl text-lg leading-relaxed text-slate-200 sm:text-xl">
+                  Connecting knowledge, practice and people across countries to strengthen social work and improve outcomes for children, young people and families.
+                </p>
+                <p className="max-w-2xl text-sm leading-7 text-slate-300">
+                  SWAB creates space for cross-border learning, evidence-informed practice, policy exchange and collaboration across the social work community.
+                </p>
+              </div>
 
-              <p className="text-amber-400 text-lg font-medium tracking-wide">
-                {hero.tagline || fallbackHero.tagline}
-              </p>
-
-              <blockquote className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg italic border-l-2 border-amber-400/80 pl-4 py-1">
-                {hero.quote || fallbackHero.quote}
-              </blockquote>
-
-              <div className="flex flex-wrap gap-3 sm:gap-4 pt-2">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <button
-                  onClick={() => handleCrossPageNav('about', 'professional-journey-vision')} 
-                  className="bg-[#e85d04] text-white px-7 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-[#dc2f02] active:scale-95 transition-all shadow-lg cursor-pointer"
+                  onClick={() => handleCrossPageNav('swab')}
+                  className="rounded-xl bg-[#e85d04] px-7 py-4 text-sm font-extrabold text-white shadow-lg shadow-orange-950/20 transition hover:-translate-y-0.5 hover:bg-[#d94f00]"
                 >
-                  Read Biography
+                  Discover SWAB <span aria-hidden="true">→</span>
                 </button>
                 <button
-                  onClick={() => handleCrossPageNav('contact')}
-                  className="bg-slate-800 text-white border border-slate-600 px-7 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm hover:bg-slate-700 active:scale-95 transition-all cursor-pointer"
+                  onClick={() => handleCrossPageNav('publications')}
+                  className="rounded-xl border border-white/25 bg-white/5 px-7 py-4 text-sm font-bold text-white transition hover:bg-white/10"
                 >
-                  Get In Touch
+                  Explore research
                 </button>
               </div>
-            </div>
 
-            {/* EMBEDDED BRAND LOGO DISPLAY CARD */}
-            <div className="bg-[#1a202c] p-8 sm:p-10 rounded-3xl border border-slate-700 shadow-2xl flex flex-col justify-center items-center text-center hover:border-amber-500/50 transition duration-300 relative group">
-              <div className="w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center shrink-0 mb-4 group-hover:scale-105 transition duration-500">
-                <img
-                  src={hero.logoUrl || fallbackHero.logoUrl}
-                  alt="Nathanael Maradza Logo"
-                  onContextMenu={preventDownloadContextMenu}
-                  className="w-full h-full object-contain select-none pointer-events-none drop-shadow-xl"
-                />
+              <div className="flex flex-wrap gap-x-6 gap-y-3 border-t border-white/15 pt-6 text-xs font-semibold text-slate-300">
+                <span>Cross-border perspectives</span>
+                <span>Evidence-informed practice</span>
+                <span>Children and family wellbeing</span>
               </div>
+            </div>
 
-              <h2 className="text-xl font-bold font-serif text-white tracking-wide">
-                {hero.cardTitle || fallbackHero.cardTitle}
-              </h2>
-              <div className="w-16 h-1 bg-amber-400 my-3 rounded-full"></div>
-              <p className="text-amber-400 text-xs uppercase tracking-widest font-semibold mb-3">
-                {hero.cardSubtitle || fallbackHero.cardSubtitle}
-              </p>
-              <p className="text-xs text-slate-300 italic max-w-xs leading-relaxed">
-                {hero.cardDescription || fallbackHero.cardDescription}
-              </p>
+            <div className="relative mx-auto w-full max-w-md">
+              <div className="absolute -inset-4 rounded-[2rem] border border-amber-300/20 rotate-3" />
+              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white p-8 text-center shadow-2xl shadow-slate-950/30 sm:p-10">
+                <div className="mx-auto mb-6 flex h-40 w-40 items-center justify-center rounded-3xl bg-slate-50 p-5 sm:h-48 sm:w-48">
+                  <img
+                    src={hero.logoUrl || fallbackHero.logoUrl}
+                    alt="Social Work Across Borders (SWAB)"
+                    onContextMenu={preventDownloadContextMenu}
+                    className="h-full w-full select-none object-contain"
+                  />
+                </div>
+                <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#e85d04]">Our shared purpose</p>
+                <h2 className="text-2xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-3xl">
+                  Different contexts.
+                  <span className="block text-[#e85d04]">Shared commitment.</span>
+                </h2>
+                <p className="mx-auto mt-4 max-w-xs text-sm leading-6 text-slate-600">
+                  Building connections that support stronger practice, better understanding and positive change.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* STATS / HIGHLIGHT BAR */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 max-w-5xl mx-auto border-t border-slate-700/80 text-center">
-            <div className="space-y-1">
-              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">10+ Years</span>
-              <p className="text-xs text-slate-300 font-medium">Practice & Field Experience</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">2 Regions</span>
-              <p className="text-xs text-slate-300 font-medium">Africa & England Alignment</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">100%</span>
-              <p className="text-xs text-slate-300 font-medium">Child-Centered Practice</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">Global</span>
-              <p className="text-xs text-slate-300 font-medium">Knowledge & Exchange</p>
-            </div>
+          <div className="mt-20 grid gap-4 border-t border-white/15 pt-8 sm:grid-cols-3">
+            {[
+              { number: '01', title: 'Connect', description: 'Bring practitioners, researchers and communities into conversation.' },
+              { number: '02', title: 'Learn', description: 'Share knowledge and compare approaches across different contexts.' },
+              { number: '03', title: 'Strengthen', description: 'Support thoughtful, inclusive and effective social work practice.' },
+            ].map((item) => (
+              <div key={item.number} className="flex gap-4 rounded-2xl bg-white/[0.045] p-5 ring-1 ring-white/10">
+                <span className="pt-1 text-sm font-extrabold text-amber-300">{item.number}</span>
+                <div>
+                  <h3 className="mb-1 font-bold text-white">{item.title}</h3>
+                  <p className="text-xs leading-5 text-slate-300">{item.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
+      {/* TOPIC SEARCH */}
+      <section className="relative z-20 mx-auto -mt-8 max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/10 sm:p-7">
+          <div className="mb-4">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#e85d04]">Explore the platform</p>
+            <h2 className="mt-1 text-xl font-bold tracking-tight text-[#10243a] sm:text-2xl">What would you like to discover?</h2>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="text"
+              placeholder="Search focus areas, research, safeguarding..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#e85d04] focus:bg-white focus:ring-4 focus:ring-orange-100"
+              aria-label="Search SWAB focus areas"
+            />
+            <button
+              onClick={() => {
+                if (searchQuery.trim()) {
+                  document.getElementById('focus-areas')?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  handleCrossPageNav('blog');
+                }
+              }}
+              className="rounded-xl bg-[#10243a] px-7 py-3.5 text-sm font-bold text-white transition hover:bg-[#1d3b5b]"
+            >
+              Search topics
+            </button>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
+            <span className="mr-1 self-center text-slate-400">Explore:</span>
+            <button onClick={() => { setSearchQuery('policy'); document.getElementById('focus-areas')?.scrollIntoView({ behavior: 'smooth' }); }} className="rounded-full bg-slate-100 px-3 py-1.5 transition hover:bg-orange-50 hover:text-[#e85d04]">Policy & systems</button>
+            <button onClick={() => { setSearchQuery('research'); document.getElementById('focus-areas')?.scrollIntoView({ behavior: 'smooth' }); }} className="rounded-full bg-slate-100 px-3 py-1.5 transition hover:bg-orange-50 hover:text-[#e85d04]">Research</button>
+            <button onClick={() => { setSearchQuery('learning'); document.getElementById('focus-areas')?.scrollIntoView({ behavior: 'smooth' }); }} className="rounded-full bg-slate-100 px-3 py-1.5 transition hover:bg-orange-50 hover:text-[#e85d04]">Learning exchange</button>
+            <button onClick={() => { setSearchQuery('safeguarding'); document.getElementById('focus-areas')?.scrollIntoView({ behavior: 'smooth' }); }} className="rounded-full bg-slate-100 px-3 py-1.5 transition hover:bg-orange-50 hover:text-[#e85d04]">Safeguarding</button>
+          </div>
         </div>
       </section>
 
       {/* "HOW CAN WE HELP?" CLASSIC NAVIGATION CARDS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-10">
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a202c] tracking-tight">
-            How Can We Assist Your Organization?
+            Explore What SWAB Offers
           </h2>
           <div className="w-16 h-1 bg-[#e85d04] mx-auto my-3 rounded-full"></div>
         </div>
@@ -453,9 +478,9 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
           <div className="bg-[#2d3748] text-white p-8 rounded-2xl shadow-xl flex flex-col justify-between hover:-translate-y-1 transition duration-300 border border-slate-700">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block mb-2">Practice & Research</span>
-              <h3 className="text-2xl font-bold font-serif mb-3">Academic Research & Policy Analysis</h3>
+              <h3 className="text-2xl font-bold font-serif mb-3">Research, Evidence & Policy</h3>
               <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                Evidence-based studies, comparative cross-border policy analysis, and statutory frameworks evaluation.
+                Explore research, comparative policy perspectives and evidence that can inform effective social work practice.
               </p>
             </div>
             <button
@@ -470,16 +495,16 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
           <div className="bg-white text-slate-900 p-8 rounded-2xl shadow-xl flex flex-col justify-between hover:-translate-y-1 transition duration-300 border border-slate-200">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#e85d04] block mb-2">Keynote Talks</span>
-              <h3 className="text-2xl font-bold font-serif mb-3">Public Speaking & Guest Lectures</h3>
+              <h3 className="text-2xl font-bold font-serif mb-3">Learning, Dialogue & Events</h3>
               <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                Interactive international panels, training workshops, and guest lectures on systemic safeguarding.
+                Engage with conversations, learning events and knowledge exchange on social work, policy and safeguarding.
               </p>
             </div>
             <button
               onClick={() => handleCrossPageNav('speaking')}
               className="w-full border-2 border-[#e85d04] text-[#e85d04] hover:bg-[#e85d04] hover:text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
             >
-              Book Keynote Talk &rarr;
+              Explore Talks & Learning →
             </button>
           </div>
 
@@ -489,14 +514,14 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
               <span className="text-xs font-bold uppercase tracking-widest text-[#e85d04] block mb-2">SWAB Network</span>
               <h3 className="text-2xl font-bold font-serif mb-3">Social Work Across Borders</h3>
               <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                Connecting global practitioners, researchers, and lived experience to improve outcomes for children.
+                A shared platform connecting practitioners, researchers and lived experience to strengthen social work across borders.
               </p>
             </div>
             <button
               onClick={() => handleCrossPageNav('swab')}
               className="w-full bg-[#1a202c] hover:bg-[#2d3748] text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition cursor-pointer text-center"
             >
-              Learn About SWAB &rarr;
+              Discover the Network →
             </button>
           </div>
 
@@ -521,7 +546,7 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
       )}
 
       {/* CORE PILLARS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section id="focus-areas" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1a202c] mb-3 tracking-tight">
             Focus Areas & Practice Pillars
@@ -533,7 +558,7 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {pillars.map((pillar) => {
+          {visiblePillars.map((pillar) => {
             const cardDescription = pillar.desc || pillar.description || '';
 
             return (
@@ -598,6 +623,13 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
               </div>
             );
           })}
+          {visiblePillars.length === 0 && (
+            <div className="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+              <p className="text-lg font-bold text-[#10243a]">No matching focus areas found</p>
+              <p className="mt-2 text-sm text-slate-500">Try another keyword or clear your search.</p>
+              <button onClick={() => setSearchQuery('')} className="mt-4 rounded-lg bg-[#10243a] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#1d3b5b]">Clear search</button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -732,10 +764,10 @@ export default function Home({ setActivePage, initialHero, initialCards }: HomeP
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="text-center md:text-left space-y-1">
             <h3 className="text-2xl font-serif font-bold text-amber-400">
-              Interested in Collaboration or Keynote Speaking?
+              Interested in Collaborating with SWAB?
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
-              Reach out to discuss international panel talks, academic research, or practice exchanges.
+              Connect with SWAB to explore research partnerships, knowledge exchange, learning events and cross-border collaboration.
             </p>
           </div>
           <button
