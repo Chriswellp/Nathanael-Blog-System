@@ -26,6 +26,7 @@ export default function Navbar({
   user,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
 
   // Chat Platform State
   const [showChatModal, setShowChatModal] = useState(false);
@@ -152,14 +153,59 @@ export default function Navbar({
 
   const navLinks = [
     { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'swab', label: 'SWAB Hub' },
-    { id: 'publications', label: 'Publications' },
-    { id: 'live', label: '🎥 Live Sessions' },
-    { id: 'speaking', label: 'Speaking' },
-    { id: 'blog', label: 'Blog' },
-    { id: 'contact', label: 'Contact' },
+    {
+      id: 'about', label: 'About', items: [
+        { id: 'about', label: 'Our Story' },
+        { id: 'who-we-are', label: 'Who We Are' },
+        { id: 'vision', label: 'Vision, Mission & Values' },
+      ],
+    },
+    {
+      id: 'swab', label: 'SWAB Hub', items: [
+        { id: 'relocation-support', label: 'International Relocation Support' },
+        { id: 'transition-programme', label: 'SWAB Transition Programme' },
+        { id: 'probation-support', label: 'Probation & Practice Support' },
+        { id: 'employer-induction', label: 'Employer Induction Programmes' },
+        { id: 'training', label: 'Professional Development & Training' },
+        { id: 'mentoring', label: 'Practice Education & Mentoring' },
+      ],
+    },
+    {
+      id: 'knowledge-hub', label: 'Knowledge Hub', items: [
+        { id: 'practice-articles', label: 'Practice Articles & Perspectives' },
+        { id: 'research', label: 'Research Reviews & Practice Insights' },
+        { id: 'international-perspectives', label: 'International Perspectives' },
+        { id: 'resources', label: 'Toolkits & Practice Resources' },
+        { id: 'podcasts', label: 'Podcasts & Webinars' },
+        { id: 'publications', label: 'Publications' },
+      ],
+    },
+    {
+      id: 'speaking', label: 'Speaking', items: [
+        { id: 'keynote-speaking', label: 'Keynote Speaking' },
+        { id: 'conferences', label: 'Conferences' },
+        { id: 'university-lectures', label: 'University Lectures' },
+        { id: 'professional-forums', label: 'Professional Forums' },
+        { id: 'workforce-events', label: 'Workforce Development Events' },
+      ],
+    },
+    {
+      id: 'contact', label: 'Contact Us', items: [
+        { id: 'contact', label: 'Contact SWAB' },
+        { id: 'registration', label: 'Registration' },
+        { id: 'partnerships', label: 'Partnership & Collaboration' },
+      ],
+    },
   ];
+
+  const isGroupActive = (link: (typeof navLinks)[number]) =>
+    activePage === link.id || ('items' in link && link.items?.some((item) => item.id === activePage));
+
+  const navigateTo = (page: string) => {
+    setActivePage(page);
+    setMobileMenuOpen(false);
+    setMobileOpenGroup(null);
+  };
 
   return (
     <>
@@ -178,34 +224,52 @@ export default function Navbar({
             <div className="relative w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 flex items-center justify-center shrink-0">
               <img 
                 src="/logo1.png" 
-                alt="Nathanael Maradza Logo" 
+                alt="Social Work Across Borders logo" 
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow" 
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-sm sm:text-base font-bold font-serif tracking-wide text-white leading-tight group-hover:text-amber-400 transition-colors">
-                Nathanael Maradza
+              <span className="text-sm sm:text-base font-extrabold tracking-wide text-white leading-tight group-hover:text-amber-400 transition-colors">
+                SOCIAL WORK
               </span>
-              <span className="text-[9px] text-amber-400 font-sans tracking-wider uppercase font-medium leading-tight">
-                Social Work Across Borders
+              <span className="text-[9px] text-amber-400 font-sans tracking-[0.16em] uppercase font-semibold leading-tight">
+                Across Borders · SWAB
               </span>
             </div>
           </div>
 
-          {/* Classic Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2 text-xs font-medium">
+          {/* Desktop Navigation */}
+          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold">
             {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => setActivePage(link.id)}
-                className={`px-3 py-1.5 rounded-md transition-all duration-200 whitespace-nowrap ${
-                  activePage === link.id 
-                    ? 'text-amber-400 font-bold bg-amber-400/10 border-b-2 border-amber-400' 
-                    : 'text-slate-300 hover:text-amber-400 hover:bg-slate-800/60'
-                }`}
-              >
-                {link.label}
-              </button>
+              <div key={link.id} className="relative group">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(link.id)}
+                  aria-haspopup={'items' in link ? 'true' : undefined}
+                  className={`inline-flex items-center gap-1 rounded-lg px-3 py-2.5 transition-all duration-200 whitespace-nowrap ${
+                    isGroupActive(link)
+                      ? 'bg-amber-400/10 text-amber-300'
+                      : 'text-slate-200 hover:bg-white/5 hover:text-amber-300'
+                  }`}
+                >
+                  {link.label}
+                  {'items' in link && <svg className="h-3 w-3 opacity-70" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.09 1.032l-4.255 4.516a.75.75 0 01-1.09 0L5.21 8.26a.75.75 0 01.02-1.05z" clipRule="evenodd" /></svg>}
+                </button>
+                {'items' in link && (
+                  <div className="invisible absolute left-0 top-full z-50 mt-2 w-72 translate-y-1 rounded-xl border border-slate-700/80 bg-slate-950 p-2 opacity-0 shadow-2xl shadow-black/30 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                    {link.items?.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => navigateTo(item.id)}
+                        className={`block w-full rounded-lg px-3 py-2.5 text-left text-xs leading-relaxed transition ${activePage === item.id ? 'bg-amber-400/15 font-bold text-amber-300' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
 
@@ -215,7 +279,7 @@ export default function Navbar({
               onClick={handleChatAction}
               className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow-sm hover:shadow-amber-400/20 flex items-center gap-1.5 active:scale-95 cursor-pointer"
             >
-              💬 Let&apos;s Chat
+              💬 Contact SWAB
             </button>
           </div>
 
@@ -241,32 +305,54 @@ export default function Navbar({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-slate-900/98 backdrop-blur-xl border-t border-slate-800 px-4 pt-3 pb-5 space-y-3 shadow-2xl animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-4rem)] overflow-y-auto">
-            <div className="grid grid-cols-1 gap-1">
+          <div className="lg:hidden border-t border-slate-700/80 bg-slate-950/98 px-4 pb-5 pt-3 shadow-2xl backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <nav aria-label="Mobile navigation" className="space-y-1">
               {navLinks.map((link) => (
-                <button
-                  key={link.id}
-                  onClick={() => {
-                    setActivePage(link.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full text-left py-2 px-3.5 rounded-lg text-xs font-semibold transition-all active:scale-[0.99] ${
-                    activePage === link.id 
-                      ? 'bg-amber-400 text-slate-950 font-bold shadow' 
-                      : 'text-slate-200 bg-slate-800/40 hover:bg-slate-800 active:bg-slate-700'
-                  }`}
-                >
-                  {link.label}
-                </button>
+                <div key={link.id} className="overflow-hidden rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigateTo(link.id)}
+                      className={`min-w-0 flex-1 rounded-lg px-3.5 py-3 text-left text-sm font-semibold transition ${isGroupActive(link) ? 'bg-amber-400/10 text-amber-300' : 'text-slate-100 hover:bg-slate-800'}`}
+                    >
+                      {link.label}
+                    </button>
+                    {'items' in link && (
+                      <button
+                        type="button"
+                        aria-label={`Toggle ${link.label} submenu`}
+                        aria-expanded={mobileOpenGroup === link.id}
+                        onClick={() => setMobileOpenGroup(mobileOpenGroup === link.id ? null : link.id)}
+                        className="rounded-lg px-4 py-3 text-amber-300 hover:bg-slate-800"
+                      >
+                        <svg className={`h-4 w-4 transition-transform ${mobileOpenGroup === link.id ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.09 1.032l-4.255 4.516a.75.75 0 01-1.09 0L5.21 8.26a.75.75 0 01.02-1.05z" clipRule="evenodd" /></svg>
+                      </button>
+                    )}
+                  </div>
+                  {'items' in link && mobileOpenGroup === link.id && (
+                    <div className="ml-3 border-l border-amber-400/30 py-1 pl-3">
+                      {link.items?.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => navigateTo(item.id)}
+                          className={`block w-full rounded-lg px-3 py-2.5 text-left text-xs leading-relaxed transition ${activePage === item.id ? 'font-bold text-amber-300' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
-            </div>
+            </nav>
 
-            <div className="pt-2 border-t border-slate-800/80">
+            <div className="mt-4 border-t border-slate-800 pt-4">
               <button
                 onClick={handleChatAction}
-                className="w-full text-center bg-amber-400 hover:bg-amber-500 text-slate-950 py-2 rounded-lg font-bold text-xs tracking-wider uppercase shadow flex items-center justify-center gap-1.5 active:scale-95 transition"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 shadow-lg shadow-amber-950/20 transition hover:bg-amber-300 active:scale-[0.99]"
               >
-                💬 Support Chat
+                💬 Contact SWAB Support
               </button>
             </div>
           </div>
