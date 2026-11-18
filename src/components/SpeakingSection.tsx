@@ -1,9 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { User } from '@supabase/supabase-js';
-import { supabase } from '@/src/lib/supabaseClient';
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { User } from "@supabase/supabase-js";
+import {
+  ArrowRight, BookOpen, GraduationCap, Mic2, Users, Building2, Globe2,
+  ShieldCheck, HeartHandshake, Lightbulb, CalendarDays, MapPin,
+  CheckCircle2, Clock3, X, Send, Sparkles, Presentation, BriefcaseBusiness
+} from "lucide-react";
+import { supabase } from "@/src/lib/supabaseClient";
 
 interface SpeakingSectionProps {
   setActivePage?: (page: string) => void;
@@ -14,41 +19,125 @@ interface SpeakingSectionProps {
 interface Booking {
   id?: string;
   name: string;
-  email: string; // Used for matching bookings to the logged-in user
+  email: string;
   organization?: string;
   event_type: string;
   event_date?: string;
   location?: string;
   message?: string;
-  status: 'pending' | 'accepted' | 'confirmed' | 'declined' | string;
+  status: "pending" | "accepted" | "confirmed" | "declined" | string;
   created_at?: string;
 }
 
-export default function SpeakingSection({ setActivePage, user, authLoading }: SpeakingSectionProps) {
+const engagementFormats = [
+  {
+    icon: Mic2,
+    title: "Keynote Speaking",
+    text: "Thought-provoking keynote presentations for conferences, professional forums, workforce development events and social work gatherings. Sessions bring together practice experience, research, international perspectives and real-world learning.",
+    examples: "International social work • Safeguarding • Workforce challenges • Professional identity • Leadership • Learning across borders",
+    id: "keynote-speaking",
+  },
+  {
+    icon: GraduationCap,
+    title: "University Lectures & Academic Engagement",
+    text: "Guest lectures, seminars and contributions to university, college and training-provider programmes. Sessions bridge theory and practice through critical reflection, contemporary issues and international perspectives.",
+    examples: "Guest lectures • Seminar facilitation • Academic programmes • Student and practitioner learning",
+    id: "university-lectures",
+  },
+  {
+    icon: Users,
+    title: "Conferences, Panels & Professional Forums",
+    text: "Contributions to conferences, panel discussions, webinars and professional forums that create space for dialogue, shared learning and knowledge exchange across the social work profession.",
+    examples: "Panel discussions • Conferences • Webinars • Professional forums • Cross-border dialogue",
+    id: "professional-forums",
+  },
+  {
+    icon: Building2,
+    title: "Workforce Development & Organisational Learning",
+    text: "Speaking and facilitation for organisations seeking contributors to workforce development events, learning days, team development activities and specialist training sessions.",
+    examples: "Local Authorities • Charities • Universities • Independent organisations • Recruitment partners",
+    id: "workforce-events",
+  },
+];
+
+const topics = [
+  {
+    icon: Globe2,
+    title: "International Social Worker Transition & Integration",
+    text: "Understanding the professional, practical and cultural adjustments involved in moving between social work systems and supporting successful transitions into practice.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Child Protection & Safeguarding",
+    text: "Exploring safeguarding responsibilities, child protection practice and approaches that promote the safety and wellbeing of children and families.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Professional Identity & Reflective Practice",
+    text: "Strengthening professional identity, critical reflection and the ability to learn from complex practice experiences.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Leadership, Resilience & Professional Growth",
+    text: "Considering leadership, professional resilience, workforce challenges and sustainable development throughout a social work career.",
+  },
+  {
+    icon: Users,
+    title: "Early Help",
+    text: "Exploring early intervention, partnership working and approaches that support children and families before difficulties escalate.",
+  },
+  {
+    icon: BookOpen,
+    title: "Family Help Assessments",
+    text: "Considering assessment, analysis and collaborative approaches to understanding family strengths, needs and support.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Looked After Children",
+    text: "Discussing practice and support for children in care, including the importance of relationships, stability, voice and outcomes.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Supporting Parents & Carers of Children with Additional Needs",
+    text: "Exploring respectful, strengths-based work with parents and carers, partnership approaches and support for children with additional needs.",
+  },
+];
+
+const audiences = [
+  "Universities and educational institutions",
+  "Local Authorities and Children's Services",
+  "Charities and non-governmental organisations",
+  "Recruitment organisations",
+  "Research groups",
+  "Professional associations",
+  "Social workers and practitioners worldwide",
+];
+
+export default function SpeakingSection({
+  setActivePage,
+  user,
+  authLoading,
+}: SpeakingSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // --- MODAL & FORM STATE ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Form Fields
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [organization, setOrganization] = useState('');
-  const [eventType, setEventType] = useState('Keynote');
-  const [eventDate, setEventDate] = useState('');
-  const [location, setLocation] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [organization, setOrganization] = useState("");
+  const [eventType, setEventType] = useState("Keynote");
+  const [eventDate, setEventDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [message, setMessage] = useState("");
 
-  // --- BOOKINGS LIST STATE ---
   const [bookingsList, setBookingsList] = useState<Booking[]>([]);
   const [isLoadingBookings, setIsLoadingBookings] = useState(true);
   const [filterConfirmedOnly, setFilterConfirmedOnly] = useState(false);
 
-  // Pre-fill user data if authenticated
   useEffect(() => {
     if (user) {
       if (user.email) setEmail(user.email);
@@ -56,35 +145,29 @@ export default function SpeakingSection({ setActivePage, user, authLoading }: Sp
     }
   }, [user]);
 
-  // Handle redirect callback (Auto-open modal after login redirect)
   useEffect(() => {
     if (authLoading) return;
-
-    const action = searchParams?.get('action');
-    if (action === 'book') {
+    const action = searchParams?.get("action");
+    if (action === "book") {
       if (user) {
         setIsModalOpen(true);
-        router.replace('/?page=speaking', { scroll: false });
+        router.replace("/?page=speaking", { scroll: false });
       } else {
-        router.push('/login?redirect=speaking&action=book');
+        router.push("/login?redirect=speaking&action=book");
       }
     }
   }, [searchParams, user, authLoading, router]);
 
-  // Request Booking button handler
   const handleRequestBookingClick = () => {
     if (!user) {
-      router.push('/login?redirect=speaking&action=book');
+      router.push("/login?redirect=speaking&action=book");
     } else {
       setIsModalOpen(true);
     }
   };
 
-  /**
-   * Fetch bookings and match them securely to the logged-in user's email address.
-   */
   const fetchBookings = useCallback(async () => {
-    if (!user || !user.email) {
+    if (!user?.email) {
       setBookingsList([]);
       setIsLoadingBookings(false);
       return;
@@ -92,72 +175,67 @@ export default function SpeakingSection({ setActivePage, user, authLoading }: Sp
 
     setIsLoadingBookings(true);
     try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
       if (sessionError || !session) {
-          console.error('Failed to retrieve valid session for booking fetch.');
-          setBookingsList([]);
-          return;
+        setBookingsList([]);
+        return;
       }
 
-      const response = await fetch(`/api/bookings?t=${Date.now()}`, { 
-        cache: 'no-store',
-        headers: { 
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json'
-        }
+      const response = await fetch(`/api/bookings?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (response.ok) {
         const data = await response.json();
         const allItems: Booking[] = Array.isArray(data) ? data : data.data || [];
-        
-        // --- EMAIL-BASED MATCHING ---
-        // Matches bookings whose email matches the logged-in user's email (case-insensitive)
-        const currentUserEmail = user.email.trim().toLowerCase();
-        const userBookings = allItems.filter(booking => {
-          if (!booking.email) return false;
-          return booking.email.trim().toLowerCase() === currentUserEmail;
-        });
-        
-        setBookingsList(userBookings);
+        const currentEmail = user.email.trim().toLowerCase();
+        setBookingsList(
+          allItems.filter(
+            (booking) =>
+              booking.email &&
+              booking.email.trim().toLowerCase() === currentEmail
+          )
+        );
       } else {
-        console.error('Failed to load bookings API:', response.statusText);
         setBookingsList([]);
       }
-    } catch (err) {
-      console.error('Error fetching bookings:', err);
+    } catch (error) {
+      console.error("Error fetching speaking enquiries:", error);
       setBookingsList([]);
     } finally {
       setIsLoadingBookings(false);
     }
   }, [user]);
 
-  // Trigger fetch on user state change or mount
   useEffect(() => {
-    if (!authLoading) {
-        if (user) {
-            fetchBookings();
-        } else {
-            setIsLoadingBookings(false);
-        }
-    }
+    if (authLoading) return;
+    if (user) fetchBookings();
+    else setIsLoadingBookings(false);
   }, [fetchBookings, user, authLoading]);
 
-  // --- SUBMIT HANDLER ---
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleBookingSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsSubmitting(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token || ''}`
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token || ""}`,
         },
         body: JSON.stringify({
           name,
@@ -167,7 +245,7 @@ export default function SpeakingSection({ setActivePage, user, authLoading }: Sp
           event_date: eventDate,
           location,
           message,
-          status: 'pending',
+          status: "pending",
         }),
       });
 
@@ -175,516 +253,372 @@ export default function SpeakingSection({ setActivePage, user, authLoading }: Sp
         setSubmitSuccess(true);
         fetchBookings();
 
-        // Reset form
-        setName(user?.user_metadata?.full_name || '');
-        setEmail(user?.email || '');
-        setOrganization('');
-        setEventType('Keynote');
-        setEventDate('');
-        setLocation('');
-        setMessage('');
+        setName(user?.user_metadata?.full_name || "");
+        setEmail(user?.email || "");
+        setOrganization("");
+        setEventType("Keynote");
+        setEventDate("");
+        setLocation("");
+        setMessage("");
 
-        const timer = setTimeout(() => {
+        window.setTimeout(() => {
           setIsModalOpen(false);
           setSubmitSuccess(false);
-        }, 3000);
-
-        return () => clearTimeout(timer);
+        }, 2800);
       } else {
         const data = await response.json();
-        setErrorMessage(data.error || 'Failed to submit booking request.');
+        setErrorMessage(data.error || "Your enquiry could not be submitted. Please try again.");
       }
-    } catch (err) {
-      console.error('Error submitting booking:', err);
-      setErrorMessage('Something went wrong. Please try again.');
+    } catch (error) {
+      console.error("Error submitting speaking enquiry:", error);
+      setErrorMessage("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Keynote Topics
-  const topics = [
-    {
-      title: 'Transnational Safeguarding & Child Protection',
-      description:
-        'Bridging jurisdictional gaps between sub-Saharan African and UK child protection legislation, handling cross-border referrals, and mitigating practice risks.',
-      tag: 'Keynote & Panels',
-    },
-    {
-      title: 'Cultural Competence in Diaspora Casework',
-      description:
-        'Navigating cultural nuances, community child protection mechanisms, and statutory intervention limits when assessing diaspora families.',
-      tag: 'Workshops & Training',
-    },
-    {
-      title: 'Decolonizing Social Work Practice',
-      description:
-        'Integrating indigenous child care frameworks alongside statutory international social work protocols for equitable outcomes.',
-      tag: 'Academic Lectures',
-    },
-  ];
-
-  // Past / Static Engagements Fallback
-  const engagements = [
-    {
-      event: 'International Social Work & Safeguarding Conference',
-      role: 'Keynote Speaker',
-      location: 'London, UK / Hybrid',
-      year: '2026',
-    },
-    {
-      event: 'Sub-Saharan Child Protection Forum',
-      role: 'Panel Lead & Presenter',
-      location: 'Nairobi, Kenya',
-      year: '2025',
-    },
-    {
-      event: 'Cross-Border Family Law & Social Care Symposium',
-      role: 'Guest Lecturer',
-      location: 'Online Webinar',
-      year: '2025',
-    },
-  ];
-
-  // Filter bookings based on view selection
   const displayedBookings = filterConfirmedOnly
-    ? bookingsList.filter((b) => b.status === 'accepted' || b.status === 'confirmed')
+    ? bookingsList.filter((booking) =>
+        ["accepted", "confirmed"].includes(booking.status)
+      )
     : bookingsList;
 
+  const navigateContact = () => {
+    if (setActivePage) setActivePage("contact");
+    else router.push("/?page=contact");
+  };
+
   return (
-    <section className="bg-slate-100 py-12 sm:py-16 text-slate-800 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto">
-          <span className="text-amber-600 text-xs font-bold tracking-wider uppercase font-sans">
-            Keynotes, Panels & Guest Lectures
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-1 mb-3">
-            Speaking & Training
-          </h1>
-          <div className="w-20 h-1 bg-amber-400 mx-auto mb-4"></div>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Nathanael Maradza delivers keynote addresses, specialized training, and panel insights on international child protection, cross-border social work, and safeguarding policy.
-          </p>
+    <main className="min-h-screen bg-[#f5f7fa] text-slate-800">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#10243a] text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-36 -top-40 h-[32rem] w-[32rem] rounded-full bg-orange-500/20 blur-3xl" />
+          <div className="absolute -bottom-48 -left-32 h-[28rem] w-[28rem] rounded-full bg-sky-500/15 blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] bg-[size:44px_44px]" />
         </div>
 
-        {/* Hero Booking Banner */}
-        <div className="bg-slate-950 text-white p-8 sm:p-10 rounded-2xl border border-amber-500/40 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="space-y-3 max-w-2xl">
-            <span className="bg-amber-400/20 text-amber-400 text-[10px] sm:text-xs font-mono px-3 py-1 rounded border border-amber-400/30 uppercase tracking-wider">
-              Booking Enquiries Open
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-amber-400">
-              Book Nathanael for Your Next Event or Workshop
-            </h2>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Available for keynotes, university lectures, agency training sessions, and international policy webinars across the UK and Sub-Saharan Africa.
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.15fr_.85fr] lg:px-10 lg:py-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-200">
+              <Sparkles className="h-3.5 w-3.5" /> Speaking • Teaching • Knowledge exchange
+            </div>
+            <p className="mb-3 text-sm font-extrabold uppercase tracking-[.2em] text-amber-300">
+              Social Work Across Borders
             </p>
+            <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+              Professional Speaking & Teaching
+              <span className="mt-2 block text-amber-300">Bringing learning beyond borders.</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-200">
+              Sharing knowledge. Connecting perspectives. Strengthening social work practice.
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              Social Work Across Borders (SWAB) welcomes opportunities to contribute to professional conversations, learning events and knowledge-exchange initiatives that strengthen social work practice and improve outcomes for children, families and communities.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+              Drawing on frontline social work, safeguarding, international workforce development and practice across different social work systems, SWAB offers engaging, thought-provoking and practice-focused presentations tailored to students, practitioners, managers, academics and organisational leaders.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={handleRequestBookingClick}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e85d04] px-6 py-4 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#cf4e00]"
+              >
+                Invite SWAB to speak <ArrowRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => document.getElementById("speaking-formats")?.scrollIntoView({ behavior: "smooth" })}
+                className="rounded-xl border border-white/25 bg-white/5 px-6 py-4 text-sm font-bold text-white transition hover:bg-white/10"
+              >
+                Explore engagement formats
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            <button
-              onClick={handleRequestBookingClick}
-              className="bg-amber-400 text-slate-950 px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-amber-500 transition shadow text-center whitespace-nowrap active:scale-95 cursor-pointer"
-            >
-              Request Booking
-            </button>
-
-            <a
-              href="https://wa.me/447352143182"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition shadow text-center whitespace-nowrap"
-            >
-              💬 WhatsApp Enquiry
-            </a>
-          </div>
-        </div>
-
-        {/* Schedule Board */}
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-3 gap-3">
-            <div>
-              <h2 className="text-2xl font-bold font-serif text-slate-900">
-                Your Booking Requests
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-amber-300/25 to-sky-400/10 blur-2xl" />
+            <div className="relative rounded-[1.75rem] border border-white/15 bg-white p-6 text-center shadow-2xl sm:p-8">
+              <img src="/logo2.png" alt="Social Work Across Borders logo" className="mx-auto h-36 w-36 object-contain sm:h-44 sm:w-44" />
+              <div className="mx-auto my-5 h-1 w-16 rounded-full bg-[#e85d04]" />
+              <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-[#e85d04]">Our shared purpose</p>
+              <h2 className="mt-3 text-2xl font-extrabold leading-tight text-[#10243a] sm:text-3xl">
+                Different perspectives.
+                <span className="block text-[#e85d04]">Stronger practice.</span>
               </h2>
-              <p className="text-slate-600 text-xs sm:text-sm">
-                Track the status of your submitted speaking engagement inquiries.
+              <p className="mx-auto mt-4 max-w-xs text-sm leading-6 text-slate-600">
+                Creating space for professional dialogue, critical reflection and international knowledge exchange.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* ENGAGEMENT FORMATS */}
+      <section id="speaking-formats" className="scroll-mt-24 bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">How SWAB can contribute</p>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">
+              Speaking, teaching & professional engagement
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Flexible contributions designed around the purpose of your event, your audience and the learning outcomes you want to achieve.
+            </p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2">
+            {engagementFormats.map(({ icon: Icon, title, text, examples, id }, index) => (
+              <article key={id} id={id} className="scroll-mt-28 rounded-2xl border border-slate-200 bg-[#fbfcfe] p-6 shadow-sm transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg sm:p-8">
+                <div className="flex items-start justify-between gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#10243a] text-amber-300">
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <span className="text-xs font-extrabold tracking-[.18em] text-[#e85d04]">0{index + 1}</span>
+                </div>
+                <h3 className="mt-6 text-xl font-extrabold text-[#10243a]">{title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+                <div className="mt-5 rounded-xl bg-white p-4">
+                  <p className="text-[10px] font-extrabold uppercase tracking-wider text-[#e85d04]">Engagement may include</p>
+                  <p className="mt-2 text-xs leading-6 text-slate-600">{examples}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TOPICS */}
+      <section id="speaking-topics" className="scroll-mt-24 bg-[#f5f7fa] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-10 max-w-3xl">
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Areas of interest</p>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">
+              Topics that matter to social work practice.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Presentations and learning sessions can be shaped around the needs of your audience and may explore the following areas.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {topics.map(({ icon: Icon, title, text }, index) => (
+              <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                <div className="flex items-center justify-between">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-[#e85d04]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="text-[10px] font-extrabold tracking-widest text-slate-300">0{index + 1}</span>
+                </div>
+                <h3 className="mt-5 text-base font-extrabold leading-snug text-[#10243a]">{title}</h3>
+                <p className="mt-2 text-xs leading-6 text-slate-600">{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* APPROACH + AUDIENCE */}
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[1fr_1fr] lg:px-10">
+          <article className="rounded-2xl bg-[#10243a] p-7 text-white shadow-lg sm:p-9">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-amber-300">
+              <Presentation className="h-6 w-6" />
+            </span>
+            <p className="mt-6 text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">Our approach</p>
+            <h2 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">Engaging, thought-provoking and practice-focused.</h2>
+            <p className="mt-5 text-sm leading-7 text-slate-200">
+              SWAB sessions are designed to promote learning, critical reflection and meaningful dialogue. Contributions connect professional knowledge and practice experience with research, international perspectives and real-world learning.
+            </p>
+            <p className="mt-4 text-sm leading-7 text-slate-300">
+              Whether addressing students, practitioners, managers, academics or organisational leaders, the focus is on relevant learning that participants can take back into their professional environments.
+            </p>
+          </article>
+
+          <article className="rounded-2xl border border-slate-200 bg-[#fbfcfe] p-7 shadow-sm sm:p-9">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-[#e85d04]">
+              <BriefcaseBusiness className="h-6 w-6" />
+            </span>
+            <p className="mt-6 text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Who we work with</p>
+            <h2 className="mt-3 text-2xl font-extrabold leading-tight text-[#10243a] sm:text-3xl">Connecting with the wider social work community.</h2>
+            <p className="mt-4 text-sm leading-7 text-slate-600">
+              SWAB welcomes invitations and opportunities to collaborate with organisations and professionals committed to strengthening social work knowledge and practice.
+            </p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {audiences.map((audience) => (
+                <li key={audience} className="flex items-start gap-2 text-sm leading-6 text-slate-700">
+                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#e85d04]" />{audience}
+                </li>
+              ))}
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      {/* BOOKING REQUESTS - EXISTING ACCOUNT FEATURE RETAINED */}
+      <section id="booking-requests" className="scroll-mt-24 bg-[#f5f7fa] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-8 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">For registered users</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[#10243a] sm:text-3xl">Your speaking enquiries</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Sign in to view and track the status of speaking engagement requests submitted through SWAB.</p>
+            </div>
             {user && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setFilterConfirmedOnly(false)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
-                    !filterConfirmedOnly
-                      ? 'bg-slate-900 text-amber-400'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  All Your Requests ({bookingsList.length})
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setFilterConfirmedOnly(false)} className={`rounded-lg px-4 py-2.5 text-xs font-bold transition ${!filterConfirmedOnly ? "bg-[#10243a] text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                  All requests ({bookingsList.length})
                 </button>
-                <button
-                  onClick={() => setFilterConfirmedOnly(true)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${
-                    filterConfirmedOnly
-                      ? 'bg-emerald-700 text-white'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  Confirmed Only (
-                  {bookingsList.filter((b) => b.status === 'accepted' || b.status === 'confirmed').length})
+                <button onClick={() => setFilterConfirmedOnly(true)} className={`rounded-lg px-4 py-2.5 text-xs font-bold transition ${filterConfirmedOnly ? "bg-emerald-700 text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                  Confirmed ({bookingsList.filter((booking) => ["accepted", "confirmed"].includes(booking.status)).length})
                 </button>
               </div>
             )}
           </div>
 
           {!user ? (
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-4 shadow-sm">
-              <p className="text-sm text-slate-600">Please sign in to view your submitted booking requests and track their status.</p>
-              <button
-                onClick={() => router.push('/login?redirect=speaking')}
-                className="bg-slate-900 text-white px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition shadow cursor-pointer"
-              >
-                Sign In to View
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+              <CalendarDays className="mx-auto h-9 w-9 text-[#e85d04]" />
+              <h3 className="mt-4 text-lg font-extrabold text-[#10243a]">Track your event enquiry</h3>
+              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600">Sign in to view your submitted speaking requests and follow their progress.</p>
+              <button onClick={() => router.push("/login?redirect=speaking")} className="mt-5 rounded-xl bg-[#10243a] px-5 py-3 text-xs font-extrabold text-white transition hover:bg-slate-800">
+                Sign in to view requests
               </button>
             </div>
           ) : isLoadingBookings ? (
-            <div className="text-center py-8 text-slate-500 font-mono text-xs">
-              Loading your schedule board...
-            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white py-10 text-center text-sm text-slate-500">Loading your enquiries…</div>
           ) : displayedBookings.length === 0 ? (
-            <div className="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-500 text-xs">
-              You have no booking records in this view. Click "Request Booking" above to submit an enquiry.
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+              <Clock3 className="mx-auto h-8 w-8 text-slate-400" />
+              <p className="mt-3 text-sm font-semibold text-[#10243a]">No enquiries in this view yet.</p>
+              <p className="mt-1 text-xs text-slate-500">Use “Invite SWAB to speak” to submit an event enquiry.</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayedBookings.map((item, idx) => {
-                const isAccepted = item.status === 'accepted' || item.status === 'confirmed';
-                const isDeclined = item.status === 'declined';
-
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {displayedBookings.map((item, index) => {
+                const accepted = ["accepted", "confirmed"].includes(item.status);
+                const declined = item.status === "declined";
                 return (
-                  <div
-                    key={item.id || idx}
-                    className={`rounded-xl p-5 transition-all duration-300 flex flex-col justify-between space-y-4 border ${
-                      isAccepted
-                        ? 'bg-amber-50/60 border-amber-500/80 shadow-md ring-2 ring-amber-400/30'
-                        : isDeclined
-                        ? 'bg-slate-50 border-slate-200 opacity-60'
-                        : 'bg-white border-slate-200 shadow-sm'
-                    }`}
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold font-mono uppercase bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                          {item.event_type || 'Event'}
-                        </span>
-
-                        {isAccepted ? (
-                          <span className="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                            Confirmed Booking
-                          </span>
-                        ) : isDeclined ? (
-                          <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                            Unavailable / Declined
-                          </span>
-                        ) : (
-                          <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
-                            Pending Review
-                          </span>
-                        )}
-                      </div>
-
-                      <h3 className="font-bold text-slate-900 font-serif text-base leading-snug">
-                        {item.organization ? item.organization : item.name}
-                      </h3>
-
-                      {item.organization && (
-                        <p className="text-xs text-slate-500 font-medium">Requested by: {item.name}</p>
-                      )}
-
-                      {item.message && (
-                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed bg-slate-100/50 p-2 rounded border border-slate-100 italic">
-                          "{item.message}"
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 font-medium">
-                      <span>📍 {item.location || 'TBA'}</span>
-                      <span className="font-bold text-slate-900">
-                        🗓️ {item.event_date ? new Date(item.event_date).toLocaleDateString() : 'Date TBD'}
+                  <article key={item.id || index} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-600">{item.event_type || "Event"}</span>
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider ${accepted ? "bg-emerald-100 text-emerald-800" : declined ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
+                        {accepted ? "Confirmed" : declined ? "Declined" : "Pending"}
                       </span>
                     </div>
-                  </div>
+                    <h3 className="mt-4 text-base font-extrabold text-[#10243a]">{item.organization || "Speaking enquiry"}</h3>
+                    {item.message && <p className="mt-2 line-clamp-3 rounded-lg bg-slate-50 p-3 text-xs leading-6 text-slate-600">{item.message}</p>}
+                    <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+                      <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{item.location || "Location to be confirmed"}</span>
+                      <span className="inline-flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" />{item.event_date ? new Date(item.event_date).toLocaleDateString() : "Date to be confirmed"}</span>
+                    </div>
+                  </article>
                 );
               })}
             </div>
           )}
         </div>
+      </section>
 
-        {/* Topics */}
-        <div className="space-y-6">
-          <div className="border-b border-slate-200 pb-3">
-            <h2 className="text-2xl font-bold font-serif text-slate-900">
-              Core Speaking & Training Topics
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm">
-              Customizable presentations designed for social care agencies, academic institutions, and international NGOs.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {topics.map((topic, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition"
-              >
-                <div className="space-y-3">
-                  <span className="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-0.5 rounded uppercase tracking-wider">
-                    {topic.tag}
-                  </span>
-                  <h3 className="text-lg font-bold font-serif text-slate-900">
-                    {topic.title}
-                  </h3>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    {topic.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+      {/* INVITATION CTA */}
+      <section className="bg-[#10243a] px-5 py-16 text-white sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-5xl rounded-[1.75rem] border border-white/10 bg-white/[.05] px-6 py-12 text-center sm:px-12 sm:py-14">
+          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">Invite SWAB to speak</p>
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+            Let’s create conversations that strengthen social work practice.
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-200">
+            Whether you are organising a conference, university event, webinar, panel discussion, professional forum or workforce development programme, SWAB welcomes opportunities to contribute to learning and knowledge exchange.
+          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <button onClick={handleRequestBookingClick} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e85d04] px-7 py-4 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#cf4e00]">
+              Submit a speaking enquiry <ArrowRight className="h-4 w-4" />
+            </button>
+            <button onClick={navigateContact} className="rounded-xl border border-white/25 bg-white/5 px-7 py-4 text-sm font-bold text-white transition hover:bg-white/10">
+              Contact SWAB
+            </button>
           </div>
         </div>
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-6 text-slate-400">
+          Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children, families and communities.
+        </p>
+      </section>
 
-        {/* Engagements */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="border-b border-slate-200 pb-3">
-              <h2 className="text-2xl font-bold font-serif text-slate-900">
-                Recent Engagements & Conferences
-              </h2>
-            </div>
-
-            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 shadow-sm overflow-hidden">
-              {engagements.map((item, idx) => (
-                <div key={idx} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition">
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base font-serif">
-                      {item.event}
-                    </h3>
-                    <p className="text-xs text-amber-700 font-semibold mt-0.5">
-                      {item.role} <span className="text-slate-500 font-normal">{item.location}</span>
-                    </p>
-                  </div>
-                  <span className="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded w-fit sm:w-auto">
-                    {item.year}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="border-b border-slate-200 pb-3">
-              <h2 className="text-2xl font-bold font-serif text-slate-900">
-                Event Organizer Resources
-              </h2>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-              <h3 className="font-bold font-serif text-slate-900 text-sm">
-                Speaker Kit & Media Assets
-              </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Download Nathanael's official bio, high-resolution headshots, and event AV requirements.
-              </p>
-
-              <div className="space-y-2 pt-2">
-                <a
-                  href="#"
-                  className="block w-full text-center bg-slate-950 text-amber-400 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-900 transition border border-amber-500/30"
-                >
-                  📄 Download Speaker Bio (PDF)
-                </a>
-                <a
-                  href="#"
-                  className="block w-full text-center bg-slate-100 text-slate-700 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-200 transition border border-slate-200"
-                >
-                  📷 Download Media Headshots
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Booking Modal */}
+      {/* BOOKING MODAL */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 overflow-y-auto"
+          className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-950/75 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="modal-title"
+          aria-labelledby="speaking-modal-title"
         >
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative border border-slate-200 my-8">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              aria-label="Close booking modal"
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold p-1 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
-              ✕
+          <div className="relative my-8 w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl sm:p-8">
+            <button onClick={() => setIsModalOpen(false)} aria-label="Close enquiry form" className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+              <X className="h-5 w-5" />
             </button>
 
-            <h3 id="modal-title" className="text-2xl font-bold font-serif text-slate-900 mb-1">
-              Request Event Booking
-            </h3>
-            <p className="text-xs text-slate-500 mb-6">
-              Fill out the details below to submit your event engagement inquiry.
-            </p>
+            <p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#e85d04]">Speaking & knowledge exchange</p>
+            <h3 id="speaking-modal-title" className="mt-2 text-2xl font-extrabold text-[#10243a]">Invite SWAB to contribute</h3>
+            <p className="mt-2 pr-6 text-sm leading-6 text-slate-500">Share a few details about your event. The SWAB team can use this information to understand your requirements.</p>
 
             {submitSuccess ? (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center space-y-2">
-                <p className="font-bold text-sm">Booking Request Sent!</p>
-                <p className="text-xs">
-                  Thank you! Your request has been recorded. Nathanael will get back to you shortly.
-                </p>
+              <div className="mt-7 rounded-xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+                <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" />
+                <h4 className="mt-3 font-extrabold text-emerald-900">Enquiry submitted successfully</h4>
+                <p className="mt-2 text-sm leading-6 text-emerald-800">Thank you for contacting Social Work Across Borders. Your speaking enquiry has been received.</p>
               </div>
             ) : (
-              <form onSubmit={handleBookingSubmit} className="space-y-4">
-                {errorMessage && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
-                    {errorMessage}
-                  </div>
-                )}
+              <form onSubmit={handleBookingSubmit} className="mt-7 space-y-4">
+                {errorMessage && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">{errorMessage}</div>}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="booking-name" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Full Name *
-                    </label>
-                    <input
-                      id="booking-name"
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Sarah Jenkins"
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
+                    <label htmlFor="speaking-name" className="mb-1.5 block text-xs font-bold text-slate-700">Your name *</label>
+                    <input id="speaking-name" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Full name" className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                   </div>
-
                   <div>
-                    <label htmlFor="booking-email" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      id="booking-email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="sarah@agency.org"
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
+                    <label htmlFor="speaking-email" className="mb-1.5 block text-xs font-bold text-slate-700">Email address *</label>
+                    <input id="speaking-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@organisation.org" className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="booking-org" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Organization / University
-                    </label>
-                    <input
-                      id="booking-org"
-                      type="text"
-                      value={organization}
-                      onChange={(e) => setOrganization(e.target.value)}
-                      placeholder="e.g. Oxford Social Care Forum"
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
+                    <label htmlFor="speaking-organisation" className="mb-1.5 block text-xs font-bold text-slate-700">Organisation / institution</label>
+                    <input id="speaking-organisation" value={organization} onChange={(event) => setOrganization(event.target.value)} placeholder="Organisation or university" className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                   </div>
-
                   <div>
-                    <label htmlFor="booking-type" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Event Type
-                    </label>
-                    <select
-                      id="booking-type"
-                      value={eventType}
-                      onChange={(e) => setEventType(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-                    >
-                      <option value="Keynote">Keynote Address</option>
-                      <option value="Workshop">Workshop / Training</option>
-                      <option value="Panel">Panel Discussion</option>
-                      <option value="Lecture">Academic Lecture</option>
+                    <label htmlFor="speaking-type" className="mb-1.5 block text-xs font-bold text-slate-700">Engagement type *</label>
+                    <select id="speaking-type" required value={eventType} onChange={(event) => setEventType(event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100">
+                      <option value="Keynote">Keynote speaking</option>
+                      <option value="University Lecture">University lecture / seminar</option>
+                      <option value="Conference">Conference</option>
+                      <option value="Panel">Panel / professional forum</option>
+                      <option value="Webinar / Podcast">Webinar / podcast</option>
+                      <option value="Workforce Development">Workforce development event</option>
+                      <option value="Workshop / Training">Workshop / training</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="booking-date" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Proposed Date
-                    </label>
-                    <input
-                      id="booking-date"
-                      type="date"
-                      value={eventDate}
-                      onChange={(e) => setEventDate(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
+                    <label htmlFor="speaking-date" className="mb-1.5 block text-xs font-bold text-slate-700">Proposed date</label>
+                    <input id="speaking-date" type="date" value={eventDate} onChange={(event) => setEventDate(event.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                   </div>
-
                   <div>
-                    <label htmlFor="booking-location" className="block text-xs font-semibold text-slate-700 mb-1">
-                      Location / Platform
-                    </label>
-                    <input
-                      id="booking-location"
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g. London / Online Zoom"
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
+                    <label htmlFor="speaking-location" className="mb-1.5 block text-xs font-bold text-slate-700">Location / online platform</label>
+                    <input id="speaking-location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="City, venue or online" className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="booking-message" className="block text-xs font-semibold text-slate-700 mb-1">
-                    Event Details & Audience *
-                  </label>
-                  <textarea
-                    id="booking-message"
-                    required
-                    rows={3}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Brief description of the event, audience size, and specific topics required..."
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  ></textarea>
+                  <label htmlFor="speaking-details" className="mb-1.5 block text-xs font-bold text-slate-700">Event details, audience & topics *</label>
+                  <textarea id="speaking-details" required rows={4} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tell us about the event, intended audience, expected participants and topics you would like SWAB to address..." className="w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none transition focus:border-[#e85d04] focus:ring-2 focus:ring-orange-100" />
                 </div>
 
-                <div className="pt-2 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="w-1/2 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100 transition cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-1/2 py-2.5 rounded-lg bg-amber-400 text-slate-950 text-xs font-bold hover:bg-amber-500 transition disabled:opacity-50 cursor-pointer"
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Submit Booking'}
+                <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                  <button type="submit" disabled={isSubmitting} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e85d04] px-6 py-3 text-sm font-extrabold text-white transition hover:bg-[#cf4e00] disabled:cursor-not-allowed disabled:opacity-60">
+                    <Send className="h-4 w-4" />{isSubmitting ? "Submitting..." : "Submit speaking enquiry"}
                   </button>
                 </div>
               </form>
@@ -692,6 +626,6 @@ export default function SpeakingSection({ setActivePage, user, authLoading }: Sp
           </div>
         </div>
       )}
-    </section>
+    </main>
   );
 }
