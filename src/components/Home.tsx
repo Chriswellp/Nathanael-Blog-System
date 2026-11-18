@@ -225,7 +225,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Why SWAB exists</p>
           <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
-            Social workers should not have to navigate change alone.
+            Social workers should not navigate change alone.
           </h2>
           <div className="mt-6 h-1 w-16 rounded-full bg-[#e85d04]" />
         </div>
