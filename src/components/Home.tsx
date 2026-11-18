@@ -171,6 +171,15 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
               knowledgeable, confident and effective practitioners through
               professional development, international workforce support,
               knowledge exchange and practice excellence.
+              <p>
+                Whether you are an aspiring social worker, an experienced 
+                practitioner seeking international opportunities, a newly
+                relocated professional navigating a new system, or an 
+                organisation investing in workforce development, SWAB 
+                provides structured pathways that support learning, 
+                growth and success.
+                
+              </p>
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <button
@@ -231,29 +240,85 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
         <div className="space-y-5 text-base leading-8 text-slate-600">
           <p>
-            Every year, social workers move into new roles, relocate to
-            different countries, adapt to unfamiliar legislation and encounter
-            new professional expectations. Many undertake these journeys with
-            limited guidance, support or professional networks.
+            Nathanael Maradza is a qualified social worker, speaker and 
+            founder of Social Work Across Borders (SWAB). He graduated 
+            with a Bachelor of Science Honours Degree in Social Work from 
+            Bindura University of Science Education, Zimbabwe, in 2022 
+            before successfully relocating and establishing a career in 
+            social work practice within the United Kingdom.
           </p>
           <p>
-            Relocating is about more than securing a job. It can mean adapting
-            to different practice standards, organisational cultures,
-            safeguarding systems, recording requirements and the needs of
-            diverse communities.
+            Prior to relocating to the UK, Nathanael developed a strong 
+            foundation in child protection, safeguarding, community 
+            development and family support through a range of roles across 
+            Zimbabwe's rural and underserved communities. He worked with 
+            the National AIDS Council Zimbabwe in Shamva District, 
+            supporting populations facing heightened vulnerability, 
+            including mine workers, commercial sex workers, children and 
+            young people living with HIV, and families affected by poverty, 
+            domestic abuse and social exclusion. During this time, he was 
+            involved in implementing community-based prevention and behaviour 
+            change programmes, including the SASA! Together model, while 
+            supporting responses to complex domestic violence situations and 
+            their impact on children and families.
           </p>
           <p>
-            SWAB exists to bridge that gap. Through accessible learning,
-            professional support, mentoring, international collaboration and
-            knowledge exchange, we help practitioners build confidence,
-            strengthen competence and thrive in their chosen practice
-            environments.
+            Nathanael also worked alongside the Department of Social Development, 
+            the government department responsible for child protection and family 
+            safeguarding in Rushinga District, Zimbabwe. This role exposed him to 
+            some of the most complex safeguarding concerns affecting rural 
+            communities, including child marriage, sexual exploitation, neglect, 
+            abuse and broader child protection risks. Working closely with children, 
+            families, community leaders and statutory partners strengthened his 
+            understanding of safeguarding within resource-constrained environments 
+            and reinforced his commitment to social justice and children's rights.
+          </p>
+          <p>
+           His experience was further enriched through his work with World Vision 
+           Zimbabwe under the Child Protection and Advocacy Team, supporting programmes 
+           across the rural districts of Mbire and Muzarabani. Here he contributed to 
+           child protection initiatives, community mobilisation, advocacy work and 
+           efforts aimed at strengthening protective environments for vulnerable children 
+           and families.
+          </p>
+          <p>
+            These experiences shaped Nathanael's professional values and understanding of 
+            the realities facing children, families and communities across different 
+            contexts. They also provided the foundation for his later work within the 
+            United Kingdom and contributed significantly to his interest in international 
+            social work, workforce development and professional transitions.
+          </p>
+          <p>
+            Throughout his professional journey, Nathanael identified significant support 
+            gaps affecting newly qualified social workers, internationally educated 
+            practitioners and professionals transitioning into unfamiliar practice 
+            environments. While many possess strong academic foundations and valuable 
+            practical experience, the transition into new systems, legislation, 
+            organisational cultures and professional expectations can be overwhelming 
+            without structured support.
+          </p>
+          <p>
+            Having experienced international relocation and professional transition himself, 
+            Nathanael became increasingly passionate about creating a structured platform 
+            that would support social workers navigating similar journeys. Drawing from both 
+            his personal and professional experiences, he established Social Work Across 
+            Borders (SWAB) to provide professional guidance, mentoring, learning opportunities, 
+            workforce support and international networks designed to help practitioners thrive 
+            throughout their careers.
+          </p>
+          <p className="font-semibold text-[#e85d04]">
+           His vision is simple:
+
           </p>
           <p className="font-semibold text-[#10243a]">
-            By supporting practitioners, we ultimately contribute to better
-            outcomes for children, families and communities.
+            Every social worker deserves access to the knowledge, support and opportunities needed 
+            to develop confidence, strengthen practice and improve outcomes for children, families 
+            and communities.
           </p>
         </div>
+        <p className="text-[10px] font-extrabold uppercase tracking-[.24em] text-[#e85d04]">
+                 Meet Our Team Lead
+                </p>
         <figure className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
           <img
             src="/swab-team-lead.png"
@@ -262,7 +327,10 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
             onContextMenu={(event) => event.preventDefault()}
           />
           <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
-            Social Work Across Borders
+            Nathanael Maradza
+          </figcaption>
+           <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
+            Founder & Team Leader | Social Work Across Borders (SWAB)
           </figcaption>
         </figure>
       </section>
