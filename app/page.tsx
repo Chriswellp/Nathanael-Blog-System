@@ -260,7 +260,10 @@ export default function MainPage() {
 
         {/* SWAB HUB */}
         {renderedPage === 'swab' && (
-          <SwabHubSection setActivePage={updateActivePage} />
+          <SwabHubSection
+  setActivePage={updateActivePage}
+  activeSection={activePage}
+/>
         )}
 
         {/* KNOWLEDGE HUB / BLOG */}

@@ -1,18 +1,4 @@
-// /src/lib/stringUtils.ts
 
-/**
- * Creates a safe ID from a string (e.g., "Practice & Fieldwork" -> "practice-fieldwork")
- */
-// /src/lib/stringUtils.ts
-
-/**
- * Creates a safe ID from a string (e.g., "Biography" -> "biography")
- */
-// /src/lib/stringUtils.ts
-
-/**
- * Creates a safe ID from a string (e.g., "Biography" -> "biography")
- */
 export const sluggifyTitle = (text: string): string => {
   if (!text) return '';
   return text
@@ -26,9 +12,7 @@ export const sluggifyTitle = (text: string): string => {
     .replace(/[^\w-]+/g, '') // Remove all non-word chars
     .replace(/--+/g, '-'); // Replace multiple - with single -
 };
-/**
- * Normalizes a string for searching/comparing (lowercase, no spaces, no punctuation)
- */
+
 const normalize = (str: string): string => {
   return str
     .toString()
@@ -38,9 +22,7 @@ const normalize = (str: string): string => {
     .replace(/[\s-]+/g, ''); // Remove spaces and hyphens
 };
 
-/**
- * Fuzzy check if a card title is similar enough to a section title
- */
+
 export const titlesAreSimilar = (cardTitle: string, sectionTitle: string): boolean => {
   if (!cardTitle || !sectionTitle) return false;
 

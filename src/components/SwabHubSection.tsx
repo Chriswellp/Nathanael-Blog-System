@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ArrowRight, BookOpen, BriefcaseBusiness, CheckCircle2, ClipboardCheck,
   Compass, GraduationCap, Globe2, HeartHandshake, MessageCircle, ShieldCheck,
   Sparkles, Users, UserRoundCheck, Wallet
 } from 'lucide-react';
 
-type Props = { setActivePage: (page: string) => void };
+type Props = {
+  setActivePage: (page: string) => void;
+  activeSection?: string;
+};
 
 const pathways = [
   {
@@ -79,17 +82,66 @@ const programmeTopics = [
   'Reflective practice and professional wellbeing'
 ];
 
-export default function SwabHubSection({ setActivePage }: Props) {
+export default function SwabHubSection({
+  setActivePage,
+  activeSection,
+}: Props) {
   const contact = () => {
     setActivePage('contact');
+
     if (typeof window !== 'undefined') {
       window.location.hash = 'contact';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
   const jump = (id: string) => {
-    if (typeof document !== 'undefined') document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (typeof document !== 'undefined') {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   };
+
+  // Maps Navbar dropdown selections to the actual pathway sections.
+  const sectionMap: Record<string, string> = {
+    'relocation-support': 'relocation-details',
+    relocation: 'relocation-details',
+
+    'transition-programme': 'transition-details',
+    transition: 'transition-details',
+
+    'probation-support': 'probation-details',
+    probation: 'probation-details',
+
+    'employer-induction': 'employers-details',
+    employers: 'employers-details',
+
+    training: 'training-details',
+    'professional-development': 'training-details',
+
+    mentoring: 'mentoring-details',
+    'practice-education': 'mentoring-details',
+  };
+
+  useEffect(() => {
+    const targetId = sectionMap[activeSection ?? ''];
+
+    if (!targetId) return;
+
+    // Wait until the SWAB Hub has mounted and its sections are available.
+    requestAnimationFrame(() => {
+      const target = document.getElementById(targetId);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    });
+  }, [activeSection]);
 
   return (
     <main className="min-h-screen bg-[#f5f7fa] text-slate-800">
