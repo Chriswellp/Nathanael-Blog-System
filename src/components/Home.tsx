@@ -14,16 +14,16 @@ const supportPathways = [
     icon: '🌍',
     title: 'International Social Workers Aspiring to Relocate',
     description:
-      'Practical guidance for social workers exploring opportunities in England, Ireland, Australia, New Zealand, Canada and other destinations. Support can include CV reviews, application guidance, interview preparation, mock interviews and professional readiness sessions.',
+      'Supporting social workers considering opportunities in England, Ireland, Australia, New Zealand, Canada and other destinations through relocation guidance, interview preparation, CV enhancement and professional readiness support.',
     tag: 'Relocation preparation',
     page: 'swab',
   },
   {
     number: '02',
     icon: '🧭',
-    title: 'The SWAB Transition Programme',
+    title: 'SWAB Transition Programme',
     description:
-      'A structured development pathway to help internationally educated social workers prepare for and adapt to a new social work system, including legislation, safeguarding, assessment, recording, direct work, cultural orientation and reflective practice.',
+      'A structured professional development programme designed to support internationally educated social workers before, during and after relocation, helping practitioners confidently transition into new systems and professional environments.',
     tag: 'Structured transition',
     page: 'swab',
   },
@@ -32,7 +32,7 @@ const supportPathways = [
     icon: '🤝',
     title: 'Probation & Practice Support',
     description:
-      'Practice-focused support for professionals adapting to unfamiliar procedures, organisational expectations and workplace cultures through reflective discussion, coaching, assessment and recording support, and mentoring.',
+      'Providing practical support for practitioners who may be experiencing challenges adapting to new legislation, organisational expectations, recording standards and workplace culture.',
     tag: 'Practice confidence',
     page: 'swab',
   },
@@ -41,7 +41,7 @@ const supportPathways = [
     icon: '🏢',
     title: 'Employer Induction Programmes',
     description:
-      'Tailored induction and transition support for local authorities, trusts and organisations recruiting internationally educated social workers, helping strengthen integration, confidence, retention and workforce stability.',
+      'Supporting Local Authorities, trusts and organisations recruiting internationally educated social workers through structured induction and transition programmes.',
     tag: 'Workforce support',
     page: 'swab',
   },
@@ -50,7 +50,7 @@ const supportPathways = [
     icon: '🎓',
     title: 'Professional Development & Training',
     description:
-      'Learning opportunities designed to strengthen professional confidence, assessment skills, safeguarding practice, reflective practice and leadership development.',
+      'Delivering learning opportunities that strengthen professional confidence, assessment skills, safeguarding practice, reflective practice and leadership development.',
     tag: 'Lifelong learning',
     page: 'swab',
   },
@@ -59,7 +59,7 @@ const supportPathways = [
     icon: '🧑‍🏫',
     title: 'Practice Education & Mentoring',
     description:
-      'Connections with experienced social workers, managers, educators and mentors who can encourage professional growth, reflection and development.',
+      'Connecting practitioners with experienced social workers, managers, educators and mentors who can support professional growth and development.',
     tag: 'Mentoring',
     page: 'swab',
   },
@@ -70,13 +70,13 @@ const focusAreas = [
     icon: '💭',
     title: 'Professional Reflection',
     description:
-      'Critical reflection on practice experiences, professional challenges and lessons learned to strengthen knowledge, confidence and effectiveness.',
+      'Encouraging critical reflection and continuous learning through shared experiences, professional discussion and reflective practice.',
   },
   {
     icon: '🌐',
     title: 'International Social Work Practice',
     description:
-      'Exploring social work systems, legislation, policy, safeguarding frameworks and professional practice across countries and cultures.',
+      'Exploring legislation, safeguarding frameworks, workforce development and practice across different countries and social work systems.',
   },
   {
     icon: '📈',
@@ -88,19 +88,19 @@ const focusAreas = [
     icon: '🎙️',
     title: 'Voices from Practice',
     description:
-      'Sharing the experiences and insights of social workers, leaders, educators, researchers and people with lived experience.',
+      'Providing a platform for social workers, educators, researchers and leaders to share experiences, insights and lessons learned.',
   },
   {
     icon: '🔎',
     title: 'Research & Best Practice',
     description:
-      'Promoting evidence-informed practice through research reviews, innovation, critical thinking and practical learning.',
+      'Promoting evidence-informed practice through research reviews, knowledge exchange and practical learning.',
   },
   {
     icon: '🛡️',
     title: 'Children, Families & Safeguarding',
     description:
-      'Keeping the safety, wellbeing and long-term outcomes of children, families and communities at the centre of social work.',
+      'Keeping the wellbeing, safety and outcomes of children, families and communities at the centre of everything we do.',
   },
 ];
 
@@ -127,8 +127,10 @@ const values = [
   },
 ];
 
+
 export default function Home({ setActivePage, initialHero }: HomeProps) {
   const logo = initialHero?.logoUrl || '/logo2.png';
+
 
   const navigate = (page: string) => {
     setActivePage(page);
@@ -138,9 +140,10 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
     }
   };
 
+
   return (
     <main className="min-h-screen bg-[#f5f7fa] text-slate-800">
-      {/* HERO */}
+      {/* HOME PAGE / HERO */}
       <section className="relative isolate overflow-hidden bg-[#10243a] text-white">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-30">
           <div className="absolute -right-40 -top-48 h-[34rem] w-[34rem] rounded-full bg-orange-500/30 blur-3xl" />
@@ -155,31 +158,16 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
               An international social work platform
             </div>
             <p className="mb-4 text-sm font-extrabold uppercase tracking-[.2em] text-amber-300">
-              Social Work Across Borders (SWAB)
+              SOCIAL WORK ACROSS BORDERS (SWAB)
             </p>
             <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-              Empowering social workers to
-              <span className="block text-amber-300">thrive across borders.</span>
+              Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children and families.
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl">
-              Through knowledge, preparation and support, we help social workers
-              navigate professional change, grow in confidence and contribute to
-              better outcomes for children and families.
+              Social Work Across Borders (SWAB) is an international platform committed to developing knowledgeable, confident and effective social work practitioners through professional development, international workforce support, knowledge exchange and practice excellence.
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              SWAB is an international platform committed to developing
-              knowledgeable, confident and effective practitioners through
-              professional development, international workforce support,
-              knowledge exchange and practice excellence.
-              <p>
-                Whether you are an aspiring social worker, an experienced 
-                practitioner seeking international opportunities, a newly
-                relocated professional navigating a new system, or an 
-                organisation investing in workforce development, SWAB 
-                provides structured pathways that support learning, 
-                growth and success.
-                
-              </p>
+              Whether you are an aspiring social worker, an experienced practitioner seeking international opportunities, a newly relocated professional navigating a new system, or an organisation investing in workforce development, SWAB provides structured pathways that support learning, growth and success.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <button
@@ -202,6 +190,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
             </div>
           </div>
 
+
           <div className="relative mx-auto w-full max-w-lg">
             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-amber-300/30 to-sky-400/10 blur-2xl" />
             <div className="relative overflow-hidden rounded-[1.8rem] border border-white/15 bg-white p-5 shadow-[0_30px_90px_rgba(0,0,0,.35)] sm:p-7">
@@ -220,8 +209,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
                   <span className="block text-[#e85d04]">Shared commitment.</span>
                 </h2>
                 <p className="mt-4 max-w-xs text-sm leading-6 text-slate-600">
-                  Connecting practice, research and lived experience to
-                  strengthen social work and create positive change.
+                  Connecting practice, research and lived experience to strengthen social work and create positive change.
                 </p>
               </div>
             </div>
@@ -229,137 +217,81 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
-      {/* INTRO / WHY WE EXIST */}
-      <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.8fr_1.2fr_.65fr] lg:px-10 lg:py-24">
+
+      {/* MEET OUR TEAM LEAD */}
+      <section className="mx-auto grid max-w-7xl items-start gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.75fr_1.5fr_.65fr] lg:px-10 lg:py-24">
         <div>
-          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Why SWAB exists</p>
+          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Meet Our Team Lead</p>
           <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
-            Social workers should not navigate change alone.
+            Nathanael Maradza
           </h2>
+          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600">
+            Founder & Team Leader | Social Work Across Borders (SWAB)
+          </p>
           <div className="mt-6 h-1 w-16 rounded-full bg-[#e85d04]" />
         </div>
         <div className="space-y-5 text-base leading-8 text-slate-600">
           <p>
-            Nathanael Maradza is a qualified social worker, speaker and 
-            founder of Social Work Across Borders (SWAB). He graduated 
-            with a Bachelor of Science Honours Degree in Social Work from 
-            Bindura University of Science Education, Zimbabwe, in 2022 
-            before successfully relocating and establishing a career in 
-            social work practice within the United Kingdom.
+            Nathanael Maradza is a qualified social worker, speaker and founder of Social Work Across Borders (SWAB). He graduated with a Bachelor of Science Honours Degree in Social Work from Bindura University of Science Education, Zimbabwe, in 2022 before successfully relocating and establishing a career in social work practice within the United Kingdom.
           </p>
           <p>
-            Prior to relocating to the UK, Nathanael developed a strong 
-            foundation in child protection, safeguarding, community 
-            development and family support through a range of roles across 
-            Zimbabwe's rural and underserved communities. He worked with 
-            the National AIDS Council Zimbabwe in Shamva District, 
-            supporting populations facing heightened vulnerability, 
-            including mine workers, commercial sex workers, children and 
-            young people living with HIV, and families affected by poverty, 
-            domestic abuse and social exclusion. During this time, he was 
-            involved in implementing community-based prevention and behaviour 
-            change programmes, including the SASA! Together model, while 
-            supporting responses to complex domestic violence situations and 
-            their impact on children and families.
+            Prior to relocating to the UK, Nathanael developed a strong foundation in child protection, safeguarding, community development and family support through a range of roles across Zimbabwe's rural and underserved communities. He worked with the National AIDS Council Zimbabwe in Shamva District, supporting populations facing heightened vulnerability, including mine workers, commercial sex workers, children and young people living with HIV, and families affected by poverty, domestic abuse and social exclusion. During this time, he was involved in implementing community-based prevention and behaviour change programmes, including the SASA! Together model, while supporting responses to complex domestic violence situations and their impact on children and families.
           </p>
           <p>
-            Nathanael also worked alongside the Department of Social Development, 
-            the government department responsible for child protection and family 
-            safeguarding in Rushinga District, Zimbabwe. This role exposed him to 
-            some of the most complex safeguarding concerns affecting rural 
-            communities, including child marriage, sexual exploitation, neglect, 
-            abuse and broader child protection risks. Working closely with children, 
-            families, community leaders and statutory partners strengthened his 
-            understanding of safeguarding within resource-constrained environments 
-            and reinforced his commitment to social justice and children's rights.
+            Nathanael also worked alongside the Department of Social Development, the government department responsible for child protection and family safeguarding in Rushinga District, Zimbabwe. This role exposed him to some of the most complex safeguarding concerns affecting rural communities, including child marriage, sexual exploitation, neglect, abuse and broader child protection risks. Working closely with children, families, community leaders and statutory partners strengthened his understanding of safeguarding within resource-constrained environments and reinforced his commitment to social justice and children's rights.
           </p>
           <p>
-           His experience was further enriched through his work with World Vision 
-           Zimbabwe under the Child Protection and Advocacy Team, supporting programmes 
-           across the rural districts of Mbire and Muzarabani. Here he contributed to 
-           child protection initiatives, community mobilisation, advocacy work and 
-           efforts aimed at strengthening protective environments for vulnerable children 
-           and families.
+            His experience was further enriched through his work with World Vision Zimbabwe under the Child Protection and Advocacy Team, supporting programmes across the rural districts of Mbire and Muzarabani. Here he contributed to child protection initiatives, community mobilisation, advocacy work and efforts aimed at strengthening protective environments for vulnerable children and families.
           </p>
           <p>
-            These experiences shaped Nathanael's professional values and understanding of 
-            the realities facing children, families and communities across different 
-            contexts. They also provided the foundation for his later work within the 
-            United Kingdom and contributed significantly to his interest in international 
-            social work, workforce development and professional transitions.
+            These experiences shaped Nathanael's professional values and understanding of the realities facing children, families and communities across different contexts. They also provided the foundation for his later work within the United Kingdom and contributed significantly to his interest in international social work, workforce development and professional transitions.
           </p>
           <p>
-            Throughout his professional journey, Nathanael identified significant support 
-            gaps affecting newly qualified social workers, internationally educated 
-            practitioners and professionals transitioning into unfamiliar practice 
-            environments. While many possess strong academic foundations and valuable 
-            practical experience, the transition into new systems, legislation, 
-            organisational cultures and professional expectations can be overwhelming 
-            without structured support.
+            Throughout his professional journey, Nathanael identified significant support gaps affecting newly qualified social workers, internationally educated practitioners and professionals transitioning into unfamiliar practice environments. While many possess strong academic foundations and valuable practical experience, the transition into new systems, legislation, organisational cultures and professional expectations can be overwhelming without structured support.
           </p>
           <p>
-            Having experienced international relocation and professional transition himself, 
-            Nathanael became increasingly passionate about creating a structured platform 
-            that would support social workers navigating similar journeys. Drawing from both 
-            his personal and professional experiences, he established Social Work Across 
-            Borders (SWAB) to provide professional guidance, mentoring, learning opportunities, 
-            workforce support and international networks designed to help practitioners thrive 
-            throughout their careers.
+            Having experienced international relocation and professional transition himself, Nathanael became increasingly passionate about creating a structured platform that would support social workers navigating similar journeys. Drawing from both his personal and professional experiences, he established Social Work Across Borders (SWAB) to provide professional guidance, mentoring, learning opportunities, workforce support and international networks designed to help practitioners thrive throughout their careers.
           </p>
-          <p className="font-semibold text-[#e85d04]">
-           His vision is simple:
-
-          </p>
+          <p className="font-semibold text-[#e85d04]">His vision is simple:</p>
           <p className="font-semibold text-[#10243a]">
-            Every social worker deserves access to the knowledge, support and opportunities needed 
-            to develop confidence, strengthen practice and improve outcomes for children, families 
-            and communities.
+            Every social worker deserves access to the knowledge, support and opportunities needed to develop confidence, strengthen practice and improve outcomes for children, families and communities.
           </p>
         </div>
-        <p className="text-[10px] font-extrabold uppercase tracking-[.24em] text-[#e85d04]">
-                 Meet Our Team Lead
-                </p>
         <figure className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
           <img
             src="/swab-team-lead.png"
-            alt="A representative portrait associated with Social Work Across Borders"
+            alt="Nathanael Maradza, Founder and Team Leader of Social Work Across Borders"
             className="aspect-[3/4] w-full rounded-xl object-cover object-top"
             onContextMenu={(event) => event.preventDefault()}
           />
           <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
-            Nathanael Maradza
-          </figcaption>
-           <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
+            Nathanael Maradza          </figcaption>
+          <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
             Founder & Team Leader | Social Work Across Borders (SWAB)
           </figcaption>
         </figure>
       </section>
 
-      {/* WHAT WE DO */}
+
+      {/* WHO WE ARE */}
       <section className="bg-white py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">How we support the profession</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">Who we are</h2>
-            <p className="mt-4 text-base leading-7 text-slate-600">
-             Supporting Social Workers Across Borders
-             <p>
-              Social Work Across Borders was established to create opportunities for social workers, 
-              educators, researchers and organisations to learn from one another across different 
-              countries, cultures and social work systems.
-             </p>
-             <p>
-              We believe that some of the most valuable learning takes place when practitioners share 
-              experiences, challenge assumptions and engage in meaningful professional conversations. 
-              Through learning, collaboration and knowledge exchange, SWAB seeks to strengthen practice 
-              and support positive outcomes for children, families and communities.
-             </p>
-             <p>
-              Whether you are exploring international opportunities, preparing for relocation, navigating 
-              probation, developing leadership skills or seeking professional growth, SWAB provides a 
-              supportive environment where learning and development can flourish.
-             </p>
-            </p>
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Who we are</p>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">
+              Supporting Social Workers Across Borders
+            </h2>
+            <div className="mt-6 space-y-5 text-left text-base leading-8 text-slate-600">
+              <p>
+                Social Work Across Borders was established to create opportunities for social workers, educators, researchers and organisations to learn from one another across different countries, cultures and social work systems.
+              </p>
+              <p>
+                We believe that some of the most valuable learning takes place when practitioners share experiences, challenge assumptions and engage in meaningful professional conversations. Through learning, collaboration and knowledge exchange, SWAB seeks to strengthen practice and support positive outcomes for children, families and communities.
+              </p>
+              <p>
+                Whether you are exploring international opportunities, preparing for relocation, navigating probation, developing leadership skills or seeking professional growth, SWAB provides a supportive environment where learning and development can flourish.
+              </p>
+            </div>
           </div>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
@@ -378,18 +310,18 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
-      {/* SUPPORT PATHWAYS */}
+
+      {/* OUR SUPPORT PATHWAYS */}
       <section className="bg-[#f5f7fa] py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div className="max-w-3xl">
               <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Our support pathways</p>
               <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">
-                Support for every stage of the journey.
+                Developing Knowledgeable, Confident and Effective Social Work Practitioners
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-                Professional learning, mentoring, transition support and
-                workforce development for social workers and organisations.
+                SWAB provides professional learning, mentoring, transition support and workforce development services tailored to social workers at different stages of their professional journey.
               </p>
             </div>
             <button onClick={() => navigate('swab')} className="w-fit rounded-xl bg-[#10243a] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#1d3b5b]">
@@ -412,29 +344,26 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
               </article>
             ))}
           </div>
+          <div className="mt-10 text-center">
+            <button onClick={() => navigate('swab-hub')} className="rounded-xl bg-[#e85d04] px-7 py-4 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#cf4e00]">
+              Explore Support Pathways – SWAB HUB →
+            </button>
+          </div>
         </div>
       </section>
+
 
       {/* TRANSITION PROGRAMME FEATURE */}
       <section className="bg-[#10243a] py-20 text-white sm:py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_.85fr] lg:px-10">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">A key SWAB pathway</p>
-            <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-              The Transition Programme
-            </h2>
+            <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">The Transition Programme</h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-200">
-              A tailored programme being developed to support internationally
-              educated social workers before and after relocation. It is
-              designed to help practitioners understand destination-country
-              legislation, professional standards, safeguarding frameworks,
-              assessment and recording, cultural context, reflective practice
-              and professional wellbeing.
+              A tailored programme being developed to support internationally educated social workers before and after relocation. It is designed to help practitioners understand destination-country legislation, professional standards, safeguarding frameworks, assessment and recording, cultural context, reflective practice and professional wellbeing.
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-              Our ambition is to create a trusted pathway that helps social
-              workers transition into new environments, build confidence and
-              realise their professional potential.
+              Our ambition is to create a trusted pathway that helps social workers transition into new environments, build confidence and realise their professional potential.
             </p>
             <button onClick={() => navigate('swab')} className="mt-8 rounded-xl bg-[#e85d04] px-6 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#cf4e00]">
               Discover the programme →
@@ -460,12 +389,13 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
-      {/* FOCUS AREAS */}
+
+      {/* OUR FOCUS AREAS */}
       <section className="bg-white py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Our focus areas</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">Driving learning, development and practice excellence.</h2>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">Driving Learning, Development and Practice Excellence</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {focusAreas.map((item) => (
@@ -479,21 +409,15 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
+
       {/* KNOWLEDGE HUB */}
       <section className="bg-[#eef2f6] py-20 sm:py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-[.9fr_1.1fr] lg:px-10">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">SWAB Knowledge Hub</p>
-            <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
-              Knowledge that supports practice.
-            </h2>
+            <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">Knowledge that supports practice.</h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              The Knowledge Hub brings together professional articles,
-              research reviews, international perspectives, podcasts,
-              webinars, toolkits and practice resources. It combines research,
-              practice wisdom, professional reflection and lived experience
-              to strengthen confidence, competence and professional
-              effectiveness.
+              The Knowledge Hub brings together professional articles, research reviews, international perspectives, podcasts, webinars, toolkits and practice resources. It combines research, practice wisdom, professional reflection and lived experience to strengthen confidence, competence and professional effectiveness.
             </p>
             <button onClick={() => navigate('publications')} className="mt-7 rounded-xl bg-[#10243a] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#1d3b5b]">
               Visit the Knowledge Hub →
@@ -517,20 +441,16 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
+
       {/* SPEAKING & COLLABORATION */}
       <section className="bg-white py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Speaking, training & collaboration</p>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
-                Bringing learning beyond borders.
-              </h2>
+              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">Bringing learning beyond borders.</h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                SWAB contributes to conferences, universities, workforce
-                development programmes, webinars, podcasts and professional
-                learning events that promote social work excellence and
-                international knowledge exchange.
+                SWAB contributes to conferences, universities, workforce development programmes, webinars, podcasts and professional learning events that promote social work excellence and international knowledge exchange.
               </p>
               <button onClick={() => navigate('speaking')} className="mt-7 rounded-xl bg-[#e85d04] px-6 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#cf4e00]">
                 Explore speaking & training →
@@ -559,7 +479,8 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
-      {/* WHY SWAB / VALUES */}
+
+      {/* VALUES */}
       <section className="bg-[#f5f7fa] py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="mx-auto mb-12 max-w-3xl text-center">
@@ -579,6 +500,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
+
       {/* JOIN COMMUNITY */}
       <section className="bg-[#10243a] px-5 py-20 text-white sm:px-8 sm:py-24">
         <div className="mx-auto max-w-5xl text-center">
@@ -587,15 +509,10 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
             Wherever you are in your journey, SWAB is here to support you.
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-200">
-            Whether you are exploring international opportunities, preparing
-            for relocation, navigating probation, seeking professional
-            development or mentoring, interested in research and knowledge
-            exchange, or looking for speaking and collaboration opportunities,
-            SWAB welcomes you.
+            Whether you are exploring international opportunities, preparing for relocation, navigating probation, seeking professional development or mentoring, interested in research and knowledge exchange, or looking for speaking and collaboration opportunities, SWAB welcomes you.
           </p>
           <p className="mt-6 text-sm font-semibold text-slate-300">
-            Developing knowledgeable, confident and effective social work
-            practitioners across borders.
+            Developing knowledgeable, confident and effective social work practitioners across borders.
           </p>
           <button onClick={() => navigate('contact')} className="mt-8 rounded-xl bg-[#e85d04] px-8 py-4 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#cf4e00]">
             Register with SWAB →
