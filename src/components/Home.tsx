@@ -340,10 +340,25 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">How we support the profession</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">What we do</h2>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243a] sm:text-4xl">Who we are</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              We provide support, learning opportunities and resources for
-              social workers at different stages of their professional journey.
+             Supporting Social Workers Across Borders
+             <p>
+              Social Work Across Borders was established to create opportunities for social workers, 
+              educators, researchers and organisations to learn from one another across different 
+              countries, cultures and social work systems.
+             </p>
+             <p>
+              We believe that some of the most valuable learning takes place when practitioners share 
+              experiences, challenge assumptions and engage in meaningful professional conversations. 
+              Through learning, collaboration and knowledge exchange, SWAB seeks to strengthen practice 
+              and support positive outcomes for children, families and communities.
+             </p>
+             <p>
+              Whether you are exploring international opportunities, preparing for relocation, navigating 
+              probation, developing leadership skills or seeking professional growth, SWAB provides a 
+              supportive environment where learning and development can flourish.
+             </p>
             </p>
           </div>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
