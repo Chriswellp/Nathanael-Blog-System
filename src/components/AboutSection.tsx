@@ -1,237 +1,529 @@
+
 'use client';
 
-import React from 'react';
-import { sluggifyTitle } from '@/src/lib/stringUtils'; // IMPORTANT IMPORT
+import React, { useEffect } from 'react';
 
-// Custom modern SVGs intended to look like Lucide icons
-const LinkedInIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-linkedin ${className}`}>
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" />
-  </svg>
-);
+interface AboutSectionProps {
+  setActivePage: (page: string) => void;
+  activeSection?: string;
+}
 
-const WhatsAppIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-message-circle ${className}`}>
-    <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-  </svg>
-);
+const values = [
+  {
+    title: 'Learn',
+    description:
+      'We believe professional growth is a lifelong journey. Every social worker should have opportunities to develop knowledge, skills and confidence throughout their career.',
+    icon: '📚',
+  },
+  {
+    title: 'Share',
+    description:
+      'We encourage the sharing of knowledge, experiences and ideas to strengthen professional practice and support collective learning.',
+    icon: '🤝',
+  },
+  {
+    title: 'Collaborate',
+    description:
+      'We recognise that meaningful change happens when practitioners, organisations and communities work together across borders.',
+    icon: '🌍',
+  },
+  {
+    title: 'Transform',
+    description:
+      'We believe learning should lead to action, innovation and positive change for children, families and communities.',
+    icon: '✨',
+  },
+];
 
-const TwitterXIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-twitter ${className}`}>
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-  </svg>
-);
-
-const FacebookIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-facebook ${className}`}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-
-const TikTokIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-music ${className}`}>
-    <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
-  </svg>
-);
-
-const InstagramIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-instagram ${className}`}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.51" />
-  </svg>
-);
-
-const DefaultIcon = ({ className = "w-6 h-6" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-globe ${className}`}>
-    <circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />
-  </svg>
-);
-
-/**
- * Helper function to render specific custom SVG based on platform name
- */
-const renderSocialIcon = (platform: string, className: string) => {
-  switch (platform) {
-    case 'linkedin': return <LinkedInIcon className={className} />;
-    case 'whatsapp': return <WhatsAppIcon className={className} />;
-    case 'twitter': return <TwitterXIcon className={className} />;
-    case 'facebook': return <FacebookIcon className={className} />;
-    case 'tiktok': return <TikTokIcon className={className} />;
-    case 'instagram': return <InstagramIcon className={className} />;
-    default: return <DefaultIcon className={className} />;
-  }
-};
+const workAreas = [
+  {
+    title: 'International Social Worker Support',
+    description:
+      'Supporting social workers considering, preparing for or undertaking international relocation through practical guidance and professional preparation.',
+  },
+  {
+    title: 'Professional Development',
+    description:
+      'Providing learning opportunities that strengthen professional knowledge, skills, confidence and effectiveness across different areas of social work.',
+  },
+  {
+    title: 'Career and Interview Support',
+    description:
+      'Offering CV reviews, application guidance, interview preparation, mock interviews and professional mentoring.',
+  },
+  {
+    title: 'Knowledge Exchange',
+    description:
+      'Creating opportunities for social workers to learn from one another through discussions, webinars, articles, podcasts and professional networking.',
+  },
+  {
+    title: 'Research and Learning',
+    description:
+      'Exploring social work practice, policy and systems across countries to promote evidence-informed learning and innovation.',
+  },
+];
 
 export default function AboutSection({
-  setActivePage
-}: {
-  setActivePage: (page: string) => void;
-}) {
-  const qualifications = [
-    {
-      title: "Practice & Fieldwork",
-      desc: "Extensive experience working across children and families safeguarding, early intervention, and community-based social work.",
-    },
-    {
-      title: "Cross-Border Practice",
-      desc: "Specialized focus on bridging social work frameworks, comparative policy, and system exchange between Africa and England.",
-    },
-    {
-      title: "Research & Academic Inquiry",
-      desc: "Authoring evidence-based articles, comparative policy analyses, and reflections that inform practice and policy outcomes.",
-    },
-  ];
+  setActivePage,
+  activeSection,
+}: AboutSectionProps) {
+  // Maps Navbar submenu names to the actual section IDs on this page.
+  useEffect(() => {
+    const sectionMap: Record<string, string> = {
+      about: 'about',
+      story: 'our-story',
+      'our-story': 'our-story',
+      'who-we-are': 'who-we-are',
+      'who-we-are-swab': 'who-we-are',
+      'why-we-exist': 'why-we-exist',
+      'what-we-do': 'what-we-do',
+      vision: 'our-vision',
+      'our-vision': 'our-vision',
+      mission: 'our-mission',
+      'our-mission': 'our-mission',
+      values: 'our-values',
+      'our-values': 'our-values',
+      'vision-mission-values': 'our-values',
+    };
 
-  // Configure your social links here. Leave as empty string ('') if you don't use a platform.
-  const socialLinks = {
-    linkedin: 'https://www.linkedin.com/in/nathanael-maradza/',
-    whatsapp: 'https://wa.me/+447352143182',
-    twitter: 'https://twitter.com/nathmaradza',
-    facebook: 'https://www.facebook.com/NathanaelMaradzaSW/',
-    tiktok: 'https://www.tiktok.com/@swacrossborders',
-    instagram: 'https://www.instagram.com/swacrossborders/',
+    const targetId = sectionMap[activeSection ?? ''];
+
+    if (!targetId || targetId === 'about') return;
+
+    requestAnimationFrame(() => {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  }, [activeSection]);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   return (
-    // FIX: Apply the main page ID and scroll-margin-top for navbar clearance
-    <section id="about" className="bg-slate-100 py-12 sm:py-16 text-slate-800 border-t border-slate-200 scroll-mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="about"
+      className="bg-slate-50 text-slate-800 border-t border-slate-200"
+    >
+      {/* HERO */}
+      <div className="relative overflow-hidden bg-slate-950 text-white py-20 sm:py-24">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute -top-24 -right-20 w-96 h-96 rounded-full border-[35px] border-amber-400" />
+          <div className="absolute -bottom-40 -left-20 w-96 h-96 rounded-full border-[35px] border-amber-400" />
+        </div>
 
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <span className="text-amber-600 text-xs font-bold tracking-wider uppercase font-sans">
-            Biography & Core Practice
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span className="inline-block text-amber-400 text-xs font-bold tracking-[0.25em] uppercase mb-5">
+            About Social Work Across Borders
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-1 mb-3">
-            About Nathanael Maradza
-          </h2>
-          <div className="w-20 h-1 bg-amber-400 mx-auto mb-4"></div>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Social Worker, Author, Speaker, and Researcher dedicated to improving outcomes for children, young people, and families through cross-border collaboration and evidence-based practice.
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight max-w-4xl mx-auto">
+            Connecting Social Work
+            <span className="block text-amber-400 mt-2">
+              Across Borders
+            </span>
+          </h1>
+
+          <div className="w-24 h-1 bg-amber-400 mx-auto my-7" />
+
+          <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+            Empowering social workers through knowledge, preparation and
+            support to thrive across borders and improve outcomes for children
+            and families.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3 mt-9">
+            <button
+              onClick={() => scrollToSection('our-story')}
+              className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-7 py-3 rounded-lg font-bold text-sm transition"
+            >
+              Discover Our Story
+            </button>
+
+            <button
+              onClick={() => setActivePage('contact')}
+              className="border border-slate-500 hover:border-amber-400 hover:text-amber-400 text-white px-7 py-3 rounded-lg font-semibold text-sm transition"
+            >
+              Get in Touch
+            </button>
+          </div>
+
+          <p className="text-amber-400 text-sm font-semibold tracking-widest mt-10">
+            LEARN <span className="text-slate-500">•</span> SHARE{' '}
+            <span className="text-slate-500">•</span> COLLABORATE{' '}
+            <span className="text-slate-500">•</span> TRANSFORM
           </p>
         </div>
+      </div>
 
-        {/* Content Layout Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
 
-          {/* Main Biography Narrative (2 Columns) */}
-          <div className="lg:col-span-2 space-y-6">
-            <div
-              // IMPORTANT FIX: Generate ID for "Biography" deep-linking
-              id="professional-journey-vision"
-              className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm space-y-4 scroll-mt-24"
-            >
-              <h3 className="text-xl sm:text-2xl font-bold font-serif text-slate-900 border-b border-amber-400/30 pb-3">
-                Professional Journey & Vision
-              </h3>
-              <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-                Nathanael Maradza is a qualified Social Worker, Researcher, and Speaker whose work centers on bridging international practice models, legislative frameworks, and lived experiences.
-              </p>
-              <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-                With a deep commitment to safeguarding children and strengthening family resilience, Nathanael founded <strong className="text-slate-900">Social Work Across Borders (SWAB)</strong>. The platform promotes global learning exchanges, critical reflections, and comparative policy analysis to inform better frontline practice across different jurisdictions—particularly between Africa and the United Kingdom.
-              </p>
-              <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-                Through keynote talks, published articles, and collaborative research, he advocates for child-centered practice, culturally competent interventions, and cross-border cooperation in safeguarding.
-              </p>
-            </div>
+        {/* OUR STORY */}
+        <section
+          id="our-story"
+          className="scroll-mt-28 grid lg:grid-cols-5 gap-10 items-start"
+        >
+          <div className="lg:col-span-2">
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+              Where It All Began
+            </span>
 
-            {/* Quick Pillars Grid */}
-            <div className="grid sm:grid-cols-3 gap-4">
-              {qualifications.map((qual, idx) => {
-                // IMPORTANT UPDATE: Generate Safe IDs for Subsections dynamically
-                const safeSubsectionId = sluggifyTitle(qual.title);
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+              Our Story
+            </h2>
 
-                return (
-                  <div
-                    key={idx}
-                    // IMPORTANT FIX: Apply Generated ID (and scroll-mt-24 for offset)
-                    id={safeSubsectionId}
-                    className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:border-amber-400 transition scroll-mt-24"
-                  >
-                    <h4 className="font-bold text-slate-900 text-sm mb-2 font-serif text-amber-700">
-                      {qual.title}
-                    </h4>
-                    <p className="text-slate-600 text-xs leading-relaxed">
-                      {qual.desc}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+            <div className="w-16 h-1 bg-amber-400 mt-5 mb-6" />
+
+            <p className="text-slate-600 leading-relaxed">
+              From a small peer-support network to an international
+              professional community, SWAB was created to make international
+              social work journeys more informed, supported and successful.
+            </p>
           </div>
 
-          {/* Quick Info & Social CTA Card (1 Column) */}
-          <div className="space-y-6 lg:sticky lg:top-28">
-            <div className="bg-slate-950 text-white p-6 rounded-2xl border border-amber-500/40 shadow-xl space-y-6 flex flex-col items-center">
+          <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-9 space-y-5">
+            <p className="text-slate-700 leading-relaxed">
+              Social Work Across Borders (SWAB) was established from a
+              commitment to supporting social workers who aspire to pursue
+              international career opportunities while making informed,
+              confident and successful transitions into new countries and
+              social work systems.
+            </p>
 
-              {/* Profile/Logo Section with Center Alignment */}
-              <div className="text-center w-full flex flex-col items-center">
-                {/* Responsive Logo Container */}
-                <div className="relative w-20 h-20 sm:w-24 h-24 lg:w-28 h-28 flex items-center justify-center shrink-0 mx-auto mb-4">
-                  <img
-                    src="/logo1.png"
-                    alt="Nathanael Maradza Logo"
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow"
-                  />
-                </div>
+            <p className="text-slate-700 leading-relaxed">
+              The idea emerged from observing the experiences of
+              internationally educated social workers seeking opportunities
+              in countries such as the United Kingdom, Ireland, Australia and
+              New Zealand. Although international opportunities continue to
+              grow, many professionals face challenges navigating recruitment
+              processes, regulatory requirements, professional standards and
+              unfamiliar practice environments.
+            </p>
 
-                <h3 className="text-xl font-bold font-serif text-white">Nathanael Maradza</h3>
-                <p className="text-amber-400 text-xs uppercase tracking-wider font-semibold mt-0.5">
-                  Social Work Across Borders
+            <p className="text-slate-700 leading-relaxed">
+              Recognising this need, SWAB's founder and team leader,
+              Nathanael Maradza, established an informal WhatsApp support
+              group. It created a safe space for social workers to share
+              knowledge, opportunities, experiences and practical advice.
+            </p>
+
+            <div className="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-lg">
+              <p className="text-slate-900 font-semibold leading-relaxed">
+                What began as a small peer-support network has grown into an
+                international community of more than 700 social workers from
+                diverse professional, cultural and geographical backgrounds.
+              </p>
+            </div>
+
+            <p className="text-slate-700 leading-relaxed">
+              The original purpose was simple: to make information about
+              professional registration, relocation, employment opportunities,
+              settlement and social work practice accessible. Through open
+              dialogue, mentoring and peer learning, members began supporting
+              one another and building valuable professional networks.
+            </p>
+
+            <p className="text-slate-700 leading-relaxed">
+              Today, SWAB is developing into a structured international
+              platform connecting social workers across countries, cultures
+              and systems through professional learning, research,
+              collaboration and mutual support.
+            </p>
+          </div>
+        </section>
+
+        {/* WHO WE ARE */}
+        <section
+          id="who-we-are"
+          className="scroll-mt-28 bg-white rounded-2xl border border-slate-200 shadow-sm p-7 sm:p-10"
+        >
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+              Our Identity
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+              Who We Are
+            </h2>
+
+            <div className="w-16 h-1 bg-amber-400 mx-auto mt-5 mb-7" />
+
+            <p className="text-slate-700 text-base sm:text-lg leading-relaxed">
+              Social Work Across Borders is an international platform
+              established to create opportunities for social workers,
+              educators, researchers and organisations to learn from one
+              another across different countries, cultures and social work
+              systems.
+            </p>
+
+            <p className="text-slate-600 leading-relaxed mt-5">
+              We believe some of the most valuable learning takes place when
+              practitioners share experiences, challenge assumptions and
+              engage in meaningful professional conversations.
+            </p>
+
+            <p className="text-slate-600 leading-relaxed mt-5">
+              Whether you are exploring international opportunities, preparing
+              for relocation, navigating probation, developing leadership
+              skills or seeking professional growth, SWAB provides a supportive
+              environment where learning and development can flourish.
+            </p>
+          </div>
+        </section>
+
+        {/* WHY WE EXIST */}
+        <section
+          id="why-we-exist"
+          className="scroll-mt-28 grid lg:grid-cols-2 gap-10 items-center"
+        >
+          <div>
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+              The Need We Address
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+              Why We Exist
+            </h2>
+
+            <div className="w-16 h-1 bg-amber-400 mt-5 mb-6" />
+
+            <h3 className="text-xl font-bold text-slate-900 font-serif mb-4">
+              Social Workers Should Not Navigate Change Alone.
+            </h3>
+
+            <p className="text-slate-600 leading-relaxed mb-5">
+              Relocating to a new country involves far more than securing
+              employment. Practitioners must understand unfamiliar legislation,
+              professional expectations, safeguarding systems and workplace
+              cultures.
+            </p>
+
+            <p className="text-slate-600 leading-relaxed">
+              Without appropriate preparation, guidance and professional
+              support, these challenges can affect confidence, performance,
+              career progression and overall wellbeing. SWAB exists to help
+              bridge this gap.
+            </p>
+          </div>
+
+          <div className="bg-slate-950 text-white rounded-2xl p-7 sm:p-9 shadow-xl">
+            <h3 className="text-xl font-bold font-serif text-amber-400 mb-6">
+              Challenges International Social Workers May Face
+            </h3>
+
+            <ul className="space-y-4">
+              {[
+                'New legislation and policy frameworks',
+                'Different practice standards and expectations',
+                'Unfamiliar organisational cultures',
+                'Different safeguarding systems',
+                'New professional terminology and recording requirements',
+                'Different approaches to assessment and intervention',
+                'Cultural and social adjustments for individuals and families',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="text-amber-400 font-bold mt-0.5">✓</span>
+                  <span className="text-slate-300 text-sm leading-relaxed">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* WHAT WE DO */}
+        <section id="what-we-do" className="scroll-mt-28">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+              Our Contribution
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+              What We Do
+            </h2>
+
+            <div className="w-16 h-1 bg-amber-400 mx-auto mt-5 mb-6" />
+
+            <p className="text-slate-600 leading-relaxed">
+              SWAB provides professional support, learning opportunities and
+              resources for social workers at different stages of their
+              professional journey.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {workAreas.map((area, index) => (
+              <article
+                key={area.title}
+                className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 transition"
+              >
+                <span className="text-amber-500 font-bold text-sm">
+                  0{index + 1}
+                </span>
+
+                <h3 className="text-lg font-bold font-serif text-slate-900 mt-3 mb-3">
+                  {area.title}
+                </h3>
+
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {area.description}
                 </p>
-              </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
-              {/* Enhanced Social Links Section */}
-              <div className="pt-4 border-t border-slate-800 space-y-3 w-full">
-                <h4 className="text-slate-400 text-xs font-bold tracking-wider uppercase text-center">Connect & Follow</h4>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  {Object.entries(socialLinks).map(([platform, url]) => (
-                    url && (
-                      <a
-                        key={platform}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-slate-800 p-2 rounded border border-slate-700 hover:border-amber-400 transition flex flex-col items-center justify-center gap-1.5 active:scale-95 text-center group"
-                        title={`Follow on ${platform}`}
-                      >
-                        {/* Render SVG with specific styling */}
-                        {renderSocialIcon(platform, "w-5 h-5 text-amber-400 group-hover:text-amber-300 transition-colors")}
-                        <span className="font-medium text-slate-200 capitalize text-[10px] tracking-wide">{platform}</span>
-                      </a>
-                    )
-                  ))}
-                </div>
-              </div>
+        {/* VISION */}
+        <section
+          id="our-vision"
+          className="scroll-mt-28 bg-slate-950 text-white rounded-2xl p-8 sm:p-12 text-center"
+        >
+          <span className="text-amber-400 text-xs font-bold uppercase tracking-widest">
+            Where We Are Going
+          </span>
 
-              {/* Role Details */}
-              <div className="border-t border-slate-800 pt-5 space-y-3 text-xs w-full">
-                <div className="flex flex-col items-center text-center">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-1">Role</span>
-                  <span className="text-slate-200 font-medium leading-relaxed">Social Worker | Researcher | Author</span>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-1">Focus Areas</span>
-                  <span className="text-slate-200 font-medium leading-relaxed">Child Protection, Safeguarding, System Comparison</span>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-1">Regions</span>
-                  <span className="text-slate-200 font-medium leading-relaxed">Africa & United Kingdom</span>
-                </div>
-              </div>
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif mt-4 mb-6">
+            Our Vision
+          </h2>
 
-              {/* CTA Button */}
-              <div className="pt-2 w-full">
-                <button
-                  onClick={() => setActivePage('contact')}
-                  className="w-full bg-amber-400 text-slate-950 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-amber-500 active:scale-95 transition shadow-md"
-                >
-                  Contact for Speaking / Media
-                </button>
-              </div>
-            </div>
+          <div className="w-16 h-1 bg-amber-400 mx-auto mb-7" />
+
+          <p className="text-slate-200 text-lg sm:text-xl leading-relaxed max-w-4xl mx-auto">
+            To connect social work practice, research and lived experience
+            across borders, creating a global community where social workers
+            learn, collaborate and grow together to improve outcomes for
+            children, families and communities.
+          </p>
+        </section>
+
+        {/* MISSION */}
+        <section
+          id="our-mission"
+          className="scroll-mt-28 max-w-4xl mx-auto text-center py-4"
+        >
+          <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+            What Drives Our Work
+          </span>
+
+          <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+            Our Mission
+          </h2>
+
+          <div className="w-16 h-1 bg-amber-400 mx-auto mt-5 mb-7" />
+
+          <p className="text-slate-700 text-lg leading-relaxed">
+            To empower social workers through knowledge sharing, professional
+            development, international collaboration, research and tailored
+            support that strengthens practice, promotes professional
+            confidence and facilitates successful transitions across different
+            social work systems.
+          </p>
+        </section>
+
+        {/* VALUES */}
+        <section
+          id="our-values"
+          className="scroll-mt-28 bg-white rounded-2xl border border-slate-200 shadow-sm p-7 sm:p-10"
+        >
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <span className="text-amber-600 text-xs font-bold uppercase tracking-widest">
+              What Guides Us
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900 mt-3">
+              Our Values
+            </h2>
+
+            <div className="w-16 h-1 bg-amber-400 mx-auto mt-5 mb-6" />
+
+            <p className="text-slate-600 leading-relaxed">
+              Learn, Share, Collaborate and Transform are more than words.
+              They guide how we connect, support and empower the social work
+              community.
+            </p>
           </div>
 
-        </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {values.map((value, index) => (
+              <article
+                key={value.title}
+                className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center hover:border-amber-400 hover:shadow-md transition"
+              >
+                <div className="text-4xl mb-4">{value.icon}</div>
+
+                <h3 className="text-xl font-bold font-serif text-slate-900 mb-3">
+                  {value.title}
+                </h3>
+
+                <div className="w-10 h-1 bg-amber-400 mx-auto mb-4" />
+
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {value.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* LONG-TERM AMBITION */}
+        <section className="bg-amber-50 border border-amber-200 rounded-2xl p-7 sm:p-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="text-amber-700 text-xs font-bold uppercase tracking-widest">
+              Looking Ahead
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-slate-900 mt-3 mb-5">
+              Our Long-Term Ambition
+            </h2>
+
+            <p className="text-slate-700 leading-relaxed mb-7">
+              SWAB aims to become a leading international platform for
+              international social worker support, professional development,
+              research, knowledge exchange, comparative social work learning,
+              publications, consultancy and global partnerships.
+            </p>
+
+            <p className="text-slate-900 font-semibold leading-relaxed">
+              Although social work systems may differ across countries, our
+              shared commitment to supporting children, families and
+              communities unites us all.
+            </p>
+          </div>
+        </section>
+
+        {/* CALL TO ACTION */}
+        <section className="text-center py-8">
+          <h2 className="text-3xl font-bold font-serif text-slate-900 mb-4">
+            Be Part of the SWAB Community
+          </h2>
+
+          <p className="text-slate-600 max-w-2xl mx-auto leading-relaxed mb-7">
+            Wherever you are in your professional journey, SWAB welcomes
+            opportunities to learn, share, collaborate and grow together.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => setActivePage('contact')}
+              className="bg-slate-950 hover:bg-slate-800 text-white px-7 py-3 rounded-lg font-bold text-sm transition"
+            >
+              Contact SWAB
+            </button>
+
+            <button
+              onClick={() => setActivePage('swab')}
+              className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-7 py-3 rounded-lg font-bold text-sm transition"
+            >
+              Explore Our Support Pathways
+            </button>
+          </div>
+        </section>
       </div>
     </section>
   );

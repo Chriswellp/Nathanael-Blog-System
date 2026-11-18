@@ -255,7 +255,10 @@ export default function MainPage() {
 
         {/* ABOUT */}
         {renderedPage === 'about' && (
-          <AboutSection setActivePage={updateActivePage} />
+          <AboutSection
+  setActivePage={updateActivePage}
+  activeSection={activePage}
+/>
         )}
 
         {/* SWAB HUB */}
@@ -285,7 +288,8 @@ export default function MainPage() {
         {renderedPage === 'speaking' && (
           <SpeakingSection
             setActivePage={updateActivePage}
-            user={user}
+  activeSection={activePage}
+  user={user}
           />
         )}
 

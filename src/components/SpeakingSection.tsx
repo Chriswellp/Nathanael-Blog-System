@@ -12,6 +12,7 @@ import { supabase } from "@/src/lib/supabaseClient";
 
 interface SpeakingSectionProps {
   setActivePage?: (page: string) => void;
+  activeSection?: string;
   user?: User | null;
   authLoading?: boolean;
 }
@@ -115,6 +116,7 @@ const audiences = [
 
 export default function SpeakingSection({
   setActivePage,
+  activeSection,
   user,
   authLoading,
 }: SpeakingSectionProps) {
@@ -220,7 +222,44 @@ export default function SpeakingSection({
     if (user) fetchBookings();
     else setIsLoadingBookings(false);
   }, [fetchBookings, user, authLoading]);
+  // Navigate directly to the selected Speaking section from the Navbar
+  useEffect(() => {
+    const sectionMap: Record<string, string> = {
+      keynote: "keynote-speaking",
+      "keynote-speaking": "keynote-speaking",
 
+      conferences: "professional-forums",
+      conference: "professional-forums",
+
+      "university-lectures": "university-lectures",
+      lectures: "university-lectures",
+
+      "professional-forums": "professional-forums",
+      forums: "professional-forums",
+
+      "workforce-events": "workforce-events",
+      workforce: "workforce-events",
+
+      topics: "speaking-topics",
+      "speaking-topics": "speaking-topics",
+
+      bookings: "booking-requests",
+      "booking-requests": "booking-requests",
+    };
+
+    const targetId = sectionMap[activeSection ?? ""];
+
+    if (!targetId) return;
+
+    requestAnimationFrame(() => {
+      const target = document.getElementById(targetId);
+
+      target?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }, [activeSection]);
   const handleBookingSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
