@@ -108,22 +108,22 @@ const values = [
   {
     word: 'Learn',
     description:
-      'Professional growth is a lifelong journey. Every social worker should have opportunities to develop knowledge, skills and confidence.',
+      'We believe professional growth is a lifelong journey and that every social worker should have opportunities to develop knowledge, skills and confidence throughout their career.',
   },
   {
     word: 'Share',
     description:
-      'Sharing knowledge, experiences and ideas strengthens practice and supports collective learning.',
+      'We encourage the sharing of knowledge, experiences and ideas to strengthen practice and support collective learning.',
   },
   {
     word: 'Collaborate',
     description:
-      'Meaningful change happens when practitioners, organisations and communities work together.',
+      'We recognise that meaningful change happens when practitioners, organisations and communities work together.',
   },
   {
     word: 'Transform',
     description:
-      'Learning should lead to action, innovation and positive change for children, families and communities.',
+      'We believe learning should lead to action, innovation and positive change for children, families and communities.',
   },
 ];
 
@@ -151,7 +151,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-24 pt-16 sm:px-8 sm:pb-28 lg:px-10 lg:pt-20">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-24 pt-16 sm:px-8 sm:pb-28 lg:grid-cols-[1.08fr_.92fr] lg:px-10 lg:pt-20">
           <div className="max-w-3xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-200">
               <span className="h-2 w-2 rounded-full bg-amber-300" />
@@ -186,9 +186,47 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
             
           </div>
 
+          {/* SWAB identity and purpose */}
+          <div className="relative mx-auto w-full max-w-xl lg:pl-3">
+            <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-amber-400/20 via-transparent to-sky-400/15 blur-3xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.055] p-6 shadow-2xl shadow-black/20 backdrop-blur-sm sm:p-8">
+              <div aria-hidden="true" className="absolute -right-16 -top-20 h-56 w-56 rounded-full border border-amber-300/10" />
+              <div aria-hidden="true" className="absolute -right-8 -top-12 h-40 w-40 rounded-full border border-sky-300/10" />
 
+              <div className="relative flex flex-col items-center text-center">
+                <div className="flex h-36 w-full items-center justify-center sm:h-44">
+                  <img
+                    src={logo}
+                    alt="Social Work Across Borders (SWAB) logo"
+                    className="h-full max-w-[260px] object-contain drop-shadow-xl"
+                  />
+                </div>
+                <p className="mt-4 text-[11px] font-extrabold uppercase tracking-[.22em] text-amber-300">
+                  Learn • Share • Collaborate • Transform
+                </p>
+                <h2 className="mt-4 max-w-md text-2xl font-extrabold leading-tight text-white sm:text-3xl">
+                  Developing knowledgeable, confident and effective social work practitioners across borders.
+                </h2>
+                <p className="mt-4 max-w-md text-sm leading-7 text-slate-300">
+                  An international platform committed to professional development, international workforce support, knowledge exchange and practice excellence.
+                </p>
+              </div>
 
-
+              <div className="relative mt-7 grid grid-cols-2 gap-3">
+                {[
+                  ['01', 'Professional Development'],
+                  ['02', 'International Workforce Support'],
+                  ['03', 'Knowledge Exchange'],
+                  ['04', 'Practice Excellence'],
+                ].map(([number, label]) => (
+                  <div key={number} className="rounded-xl border border-white/10 bg-[#0b1c2d]/65 p-4 text-left">
+                    <span className="text-[10px] font-extrabold tracking-[.18em] text-amber-300">{number}</span>
+                    <p className="mt-2 text-xs font-bold leading-5 text-slate-100 sm:text-sm">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
