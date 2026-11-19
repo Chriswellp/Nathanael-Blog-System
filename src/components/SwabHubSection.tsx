@@ -151,19 +151,7 @@ export default function SwabHubSection({ setActivePage, activeSection }: Props) 
               <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-[#e85d04]">Learn • Share • Collaborate • Transform</p>
               <h2 className="mx-auto mt-4 max-w-md text-2xl font-extrabold leading-tight text-[#10243a] sm:text-3xl">Developing knowledgeable, confident and effective social work practitioners across borders.</h2>
               <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-600">An international platform committed to professional development, international workforce support, knowledge exchange and practice excellence.</p>
-              <div className="mt-7 grid grid-cols-2 gap-3 text-left">
-                {[
-                  ['01', 'Professional Development'],
-                  ['02', 'International Workforce Support'],
-                  ['03', 'Knowledge Exchange'],
-                  ['04', 'Practice Excellence'],
-                ].map(([number, label]) => (
-                  <div key={number} className="rounded-xl border border-slate-200 bg-[#f5f7fa] p-4">
-                    <span className="text-[10px] font-extrabold tracking-[.18em] text-[#e85d04]">{number}</span>
-                    <p className="mt-2 text-xs font-bold leading-5 text-[#10243a] sm:text-sm">{label}</p>
-                  </div>
-                ))}
-              </div>
+              
             </div>
           </div>
         </div>
