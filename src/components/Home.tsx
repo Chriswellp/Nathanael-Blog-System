@@ -155,7 +155,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
           <div className="max-w-3xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-200">
               <span className="h-2 w-2 rounded-full bg-amber-300" />
-              Social Worker Taken Global!
+              Social Work Taken Global!
             </div>
             <p className="mb-4 text-sm font-extrabold uppercase tracking-[.2em] text-amber-300">
               SOCIAL WORK ACROSS BORDERS (SWAB)
