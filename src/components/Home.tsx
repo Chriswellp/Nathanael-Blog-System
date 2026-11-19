@@ -188,84 +188,73 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
 
 
 <div className="relative mx-auto w-full max-w-xl lg:pl-4">
-  <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-amber-400/15 via-transparent to-sky-400/10 blur-2xl" />
+  <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-amber-400/20 via-transparent to-sky-400/15 blur-3xl" />
 
-  <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-5 shadow-2xl backdrop-blur-sm sm:p-7">
-
+  <div className="relative">
     {/* Founder introduction */}
-    <div className="flex items-center gap-5">
-      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-2 border-amber-300/60 shadow-lg sm:h-28 sm:w-28">
-        <img
-          src="/swab-team-lead.png"
-          alt="Nathanael Maradza, Founder of SWAB"
-          className="h-full w-full object-cover object-top"
-          onContextMenu={(event) => event.preventDefault()}
-        />
+    <div className="flex items-center gap-5 border-b border-white/15 pb-6 sm:gap-6">
+      <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-600 opacity-80 blur-[2px]" />
+        <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/20 bg-[#1d3b5b]">
+          <img
+            src="/swab-team-lead.png"
+            alt="Nathanael Maradza, Founder of SWAB"
+            className="h-full w-full object-cover object-top"
+            onContextMenu={(event) => event.preventDefault()}
+          />
+        </div>
       </div>
 
-      <div>
-        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-300">
-          Meet Our Founder
+      <div className="min-w-0">
+        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-300 sm:text-xs">
+          Meet Our Team Lead
         </p>
-        <h2 className="mt-2 text-xl font-extrabold leading-tight text-white sm:text-2xl">
+        <h2 className="mt-2 text-xl font-extrabold leading-tight text-white sm:text-2xl lg:text-3xl">
           Nathanael Maradza
         </h2>
-        <p className="mt-1 text-xs font-semibold leading-5 text-slate-300 sm:text-sm">
-          Founder & Team Leader
-          <span className="block">Social Work Across Borders (SWAB)</span>
+        <p className="mt-2 text-xs font-semibold leading-5 text-slate-300 sm:text-sm">
+          Founder & Team Leader | Social Work Across Borders (SWAB)
         </p>
       </div>
     </div>
 
-    <div className="my-6 h-px bg-gradient-to-r from-amber-300/60 via-white/15 to-transparent" />
-
     {/* Founder's story */}
-    <div>
-      <p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-300">
-        A Journey Across Borders
+    <div className="pt-6">
+      <div className="flex items-center gap-3">
+        <span className="h-px w-8 bg-[#e85d04]" />
+        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-300 sm:text-xs">
+          A Journey Across Borders
+        </p>
+      </div>
+
+      <p className="mt-4 text-sm leading-7 text-slate-200 sm:text-[15px]">
+        Nathanael Maradza is a qualified social worker, speaker and founder of Social Work Across Borders (SWAB). He graduated with a Bachelor of Science Honours Degree in Social Work from Bindura University of Science Education, Zimbabwe, in 2022 before successfully relocating and establishing a career in social work practice within the United Kingdom.
       </p>
 
-      <p className="mt-4 text-sm leading-7 text-slate-200">
-        Nathanael Maradza is a qualified social worker who graduated with a
-        Bachelor of Science Honours Degree in Social Work from Bindura
-        University of Science Education, Zimbabwe, in 2022 before relocating
-        to establish his social work career in the United Kingdom.
+      <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-[15px]">
+        Prior to relocating to the UK, Nathanael developed a strong foundation in child protection, safeguarding, community development and family support through a range of roles across Zimbabwe's rural and underserved communities.
       </p>
 
-      <p className="mt-3 text-sm leading-7 text-slate-300">
-        His professional journey includes experience in child protection,
-        safeguarding, community development and family support across
-        Zimbabwe's rural communities, including work with the National AIDS
-        Council Zimbabwe, the Department of Social Development and World
-        Vision Zimbabwe.
-      </p>
-
-      <p className="mt-3 text-sm leading-7 text-slate-300">
-        Having experienced international relocation and professional
-        transition himself, Nathanael recognised the need for structured
-        guidance and support for social workers adapting to unfamiliar
-        professional environments. This inspired him to establish SWAB.
+      <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-[15px]">
+        Throughout his professional journey, Nathanael identified significant support gaps affecting newly qualified social workers, internationally educated practitioners and professionals transitioning into unfamiliar practice environments.
       </p>
     </div>
 
     {/* Founder vision */}
-    <div className="mt-6 rounded-xl border-l-4 border-[#e85d04] bg-white/[0.06] px-4 py-4">
-      <p className="text-sm font-semibold italic leading-7 text-white">
-        "Every social worker deserves access to the knowledge, support and
-        opportunities needed to develop confidence, strengthen practice and
-        improve outcomes for children, families and communities."
+    <div className="mt-5 border-l-2 border-[#e85d04] bg-white/[0.05] py-3 pl-4 pr-3 sm:pl-5">
+      <p className="text-sm font-semibold italic leading-6 text-white sm:text-[15px] sm:leading-7">
+        Every social worker deserves access to the knowledge, support and opportunities needed to develop confidence, strengthen practice and improve outcomes for children, families and communities.
       </p>
     </div>
 
     {/* Read full story */}
     <a
       href="#team-leader"
-      className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-amber-300 transition hover:gap-3 hover:text-amber-200"
+      className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-amber-300 transition hover:gap-3 hover:text-amber-200"
     >
       Read Nathanael's full story
       <span aria-hidden="true">→</span>
     </a>
-
   </div>
 </div>
 
@@ -274,7 +263,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
 
 
       {/* MEET OUR TEAM LEAD */}
-      <section className="mx-auto grid max-w-7xl items-start gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.75fr_1.5fr_.65fr] lg:px-10 lg:py-24">
+      <section id="team-leader" className="mx-auto grid max-w-7xl items-start gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.75fr_1.5fr_.65fr] lg:px-10 lg:py-24">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Meet Our Team Lead</p>
           <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
