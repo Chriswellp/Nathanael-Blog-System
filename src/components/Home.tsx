@@ -151,7 +151,7 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-24 pt-16 sm:px-8 sm:pb-28 lg:grid-cols-[1.1fr_.9fr] lg:px-10 lg:pt-20">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-24 pt-16 sm:px-8 sm:pb-28 lg:px-10 lg:pt-20">
           <div className="max-w-3xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-amber-200">
               <span className="h-2 w-2 rounded-full bg-amber-300" />
@@ -187,133 +187,75 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
           </div>
 
 
-<div className="relative mx-auto w-full max-w-xl lg:pl-4">
-  <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-amber-400/20 via-transparent to-sky-400/15 blur-3xl" />
 
-  <div className="relative">
-    {/* Founder introduction */}
-    <div className="flex items-center gap-5 border-b border-white/15 pb-6 sm:gap-6">
-      <div className="relative h-24 w-24 shrink-0 sm:h-28 sm:w-28">
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-600 opacity-80 blur-[2px]" />
-        <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/20 bg-[#1d3b5b]">
-          <img
-            src="/swab-team-lead.png"
-            alt="Nathanael Maradza, Founder of SWAB"
-            className="h-full w-full object-cover object-top"
-            onContextMenu={(event) => event.preventDefault()}
-          />
-        </div>
-      </div>
-
-      <div className="min-w-0">
-        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-300 sm:text-xs">
-          Meet Our Team Lead
-        </p>
-        <h2 className="mt-2 text-xl font-extrabold leading-tight text-white sm:text-2xl lg:text-3xl">
-          Nathanael Maradza
-        </h2>
-        <p className="mt-2 text-xs font-semibold leading-5 text-slate-300 sm:text-sm">
-          Founder & Team Leader | Social Work Across Borders (SWAB)
-        </p>
-      </div>
-    </div>
-
-    {/* Founder's story */}
-    <div className="pt-6">
-      <div className="flex items-center gap-3">
-        <span className="h-px w-8 bg-[#e85d04]" />
-        <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-300 sm:text-xs">
-          A Journey Across Borders
-        </p>
-      </div>
-
-      <p className="mt-4 text-sm leading-7 text-slate-200 sm:text-[15px]">
-        Nathanael Maradza is a qualified social worker, speaker and founder of Social Work Across Borders (SWAB). He graduated with a Bachelor of Science Honours Degree in Social Work from Bindura University of Science Education, Zimbabwe, in 2022 before successfully relocating and establishing a career in social work practice within the United Kingdom.
-      </p>
-
-      <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-[15px]">
-        Prior to relocating to the UK, Nathanael developed a strong foundation in child protection, safeguarding, community development and family support through a range of roles across Zimbabwe's rural and underserved communities.
-      </p>
-
-      <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-[15px]">
-        Throughout his professional journey, Nathanael identified significant support gaps affecting newly qualified social workers, internationally educated practitioners and professionals transitioning into unfamiliar practice environments.
-      </p>
-    </div>
-
-    {/* Founder vision */}
-    <div className="mt-5 border-l-2 border-[#e85d04] bg-white/[0.05] py-3 pl-4 pr-3 sm:pl-5">
-      <p className="text-sm font-semibold italic leading-6 text-white sm:text-[15px] sm:leading-7">
-        Every social worker deserves access to the knowledge, support and opportunities needed to develop confidence, strengthen practice and improve outcomes for children, families and communities.
-      </p>
-    </div>
-
-    {/* Read full story */}
-    <a
-      href="#team-leader"
-      className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-amber-300 transition hover:gap-3 hover:text-amber-200"
-    >
-      Read Nathanael's full story
-      <span aria-hidden="true">→</span>
-    </a>
-  </div>
-</div>
 
         </div>
       </section>
 
 
       {/* MEET OUR TEAM LEAD */}
-      <section id="team-leader" className="mx-auto grid max-w-7xl items-start gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[.75fr_1.5fr_.65fr] lg:px-10 lg:py-24">
-        <div>
-          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#e85d04]">Meet Our Team Lead</p>
-          <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-[#10243a] sm:text-4xl">
-            Nathanael Maradza
-          </h2>
-          <p className="mt-4 text-sm font-semibold leading-7 text-slate-600">
-            Founder & Team Leader | Social Work Across Borders (SWAB)
-          </p>
-          <div className="mt-6 h-1 w-16 rounded-full bg-[#e85d04]" />
+      <section id="team-leader" className="relative isolate overflow-hidden bg-[#10243a] py-20 text-white sm:py-24">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-30">
+          <div className="absolute -right-40 -top-40 h-[30rem] w-[30rem] rounded-full bg-amber-500/20 blur-3xl" />
+          <div className="absolute -bottom-48 -left-32 h-[30rem] w-[30rem] rounded-full bg-sky-500/15 blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.025)_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
-        <div className="space-y-5 text-base leading-8 text-slate-600">
-          <p>
-            Nathanael Maradza is a qualified social worker, speaker and founder of Social Work Across Borders (SWAB). He graduated with a Bachelor of Science Honours Degree in Social Work from Bindura University of Science Education, Zimbabwe, in 2022 before successfully relocating and establishing a career in social work practice within the United Kingdom.
-          </p>
-          <p>
-            Prior to relocating to the UK, Nathanael developed a strong foundation in child protection, safeguarding, community development and family support through a range of roles across Zimbabwe's rural and underserved communities. He worked with the National AIDS Council Zimbabwe in Shamva District, supporting populations facing heightened vulnerability, including mine workers, commercial sex workers, children and young people living with HIV, and families affected by poverty, domestic abuse and social exclusion. During this time, he was involved in implementing community-based prevention and behaviour change programmes, including the SASA! Together model, while supporting responses to complex domestic violence situations and their impact on children and families.
-          </p>
-          <p>
-            Nathanael also worked alongside the Department of Social Development, the government department responsible for child protection and family safeguarding in Rushinga District, Zimbabwe. This role exposed him to some of the most complex safeguarding concerns affecting rural communities, including child marriage, sexual exploitation, neglect, abuse and broader child protection risks. Working closely with children, families, community leaders and statutory partners strengthened his understanding of safeguarding within resource-constrained environments and reinforced his commitment to social justice and children's rights.
-          </p>
-          <p>
-            His experience was further enriched through his work with World Vision Zimbabwe under the Child Protection and Advocacy Team, supporting programmes across the rural districts of Mbire and Muzarabani. Here he contributed to child protection initiatives, community mobilisation, advocacy work and efforts aimed at strengthening protective environments for vulnerable children and families.
-          </p>
-          <p>
-            These experiences shaped Nathanael's professional values and understanding of the realities facing children, families and communities across different contexts. They also provided the foundation for his later work within the United Kingdom and contributed significantly to his interest in international social work, workforce development and professional transitions.
-          </p>
-          <p>
-            Throughout his professional journey, Nathanael identified significant support gaps affecting newly qualified social workers, internationally educated practitioners and professionals transitioning into unfamiliar practice environments. While many possess strong academic foundations and valuable practical experience, the transition into new systems, legislation, organisational cultures and professional expectations can be overwhelming without structured support.
-          </p>
-          <p>
-            Having experienced international relocation and professional transition himself, Nathanael became increasingly passionate about creating a structured platform that would support social workers navigating similar journeys. Drawing from both his personal and professional experiences, he established Social Work Across Borders (SWAB) to provide professional guidance, mentoring, learning opportunities, workforce support and international networks designed to help practitioners thrive throughout their careers.
-          </p>
-          <p className="font-semibold text-[#e85d04]">His vision is simple:</p>
-          <p className="font-semibold text-[#10243a]">
-            Every social worker deserves access to the knowledge, support and opportunities needed to develop confidence, strengthen practice and improve outcomes for children, families and communities.
-          </p>
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-10 max-w-3xl">
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">Meet Our Team Lead</p>
+            <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl">
+              Nathanael Maradza
+            </h2>
+            <p className="mt-4 text-sm font-semibold leading-7 text-slate-300">
+              Founder &amp; Team Leader | Social Work Across Borders (SWAB)
+            </p>
+            <div className="mt-6 h-1 w-16 rounded-full bg-[#e85d04]" />
+          </div>
+
+          <div className="grid items-start gap-10 lg:grid-cols-[.72fr_1.7fr] lg:gap-12">
+            <figure className="mx-auto w-full max-w-sm overflow-hidden rounded-2xl border border-white/15 bg-white/[0.04] p-2 shadow-2xl shadow-black/20 lg:sticky lg:top-8">
+              <div className="overflow-hidden rounded-xl border border-white/10">
+                <img
+                  src="/swab-team-lead.png"
+                  alt="Nathanael Maradza, Founder and Team Leader of Social Work Across Borders"
+                  className="aspect-[3/4] w-full object-cover object-top"
+                  onContextMenu={(event) => event.preventDefault()}
+                />
+              </div>
+            </figure>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-xl shadow-black/10 sm:p-8 lg:p-9">
+              <div className="space-y-5 text-sm leading-7 text-slate-200 sm:text-[15px] sm:leading-8">
+                <p>
+                  Nathanael Maradza is a qualified social worker, speaker and founder of Social Work Across Borders (SWAB). He graduated with a Bachelor of Science Honours Degree in Social Work from Bindura University of Science Education, Zimbabwe, in 2022 before successfully relocating and establishing a career in social work practice within the United Kingdom.
+                </p>
+                <p>
+                  Prior to relocating to the UK, Nathanael developed a strong foundation in child protection, safeguarding, community development and family support through a range of roles across Zimbabwe's rural and underserved communities. He worked with the National AIDS Council Zimbabwe in Shamva District, supporting populations facing heightened vulnerability, including mine workers, commercial sex workers, children and young people living with HIV, and families affected by poverty, domestic abuse and social exclusion. During this time, he was involved in implementing community-based prevention and behaviour change programmes, including the SASA! Together model, while supporting responses to complex domestic violence situations and their impact on children and families.
+                </p>
+                <p>
+                  Nathanael also worked alongside the Department of Social Development, the government department responsible for child protection and family safeguarding in Rushinga District, Zimbabwe. This role exposed him to some of the most complex safeguarding concerns affecting rural communities, including child marriage, sexual exploitation, neglect, abuse and broader child protection risks. Working closely with children, families, community leaders and statutory partners strengthened his understanding of safeguarding within resource-constrained environments and reinforced his commitment to social justice and children's rights.
+                </p>
+                <p>
+                  His experience was further enriched through his work with World Vision Zimbabwe under the Child Protection and Advocacy Team, supporting programmes across the rural districts of Mbire and Muzarabani. Here he contributed to child protection initiatives, community mobilisation, advocacy work and efforts aimed at strengthening protective environments for vulnerable children and families.
+                </p>
+                <p>
+                  These experiences shaped Nathanael's professional values and understanding of the realities facing children, families and communities across different contexts. They also provided the foundation for his later work within the United Kingdom and contributed significantly to his interest in international social work, workforce development and professional transitions.
+                </p>
+                <p>
+                  Throughout his professional journey, Nathanael identified significant support gaps affecting newly qualified social workers, internationally educated practitioners and professionals transitioning into unfamiliar practice environments. While many possess strong academic foundations and valuable practical experience, the transition into new systems, legislation, organisational cultures and professional expectations can be overwhelming without structured support.
+                </p>
+                <p>
+                  Having experienced international relocation and professional transition himself, Nathanael became increasingly passionate about creating a structured platform that would support social workers navigating similar journeys. Drawing from both his personal and professional experiences, he established Social Work Across Borders (SWAB) to provide professional guidance, mentoring, learning opportunities, workforce support and international networks designed to help practitioners thrive throughout their careers.
+                </p>
+                <p className="pt-2 font-semibold text-amber-300">His vision is simple:</p>
+                <p className="border-l-2 border-[#e85d04] bg-white/[0.05] py-4 pl-5 pr-4 text-base font-semibold italic leading-7 text-white sm:text-lg sm:leading-8">
+                  Every social worker deserves access to the knowledge, support and opportunities needed to develop confidence, strengthen practice and improve outcomes for children, families and communities.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <figure className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-          <img
-            src="/swab-team-lead.png"
-            alt="Nathanael Maradza, Founder and Team Leader of Social Work Across Borders"
-            className="aspect-[3/4] w-full rounded-xl object-cover object-top"
-            onContextMenu={(event) => event.preventDefault()}
-          />
-          <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
-            Nathanael Maradza          </figcaption>
-          <figcaption className="px-3 py-3 text-center text-xs font-semibold tracking-wide text-slate-500">
-            Founder & Team Leader | Social Work Across Borders (SWAB)
-          </figcaption>
-        </figure>
       </section>
 
 
