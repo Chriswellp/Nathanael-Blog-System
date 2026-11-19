@@ -1009,7 +1009,6 @@ export default function SpeakingSection({
                     />
                   </div>
                 </div>
-
                 <div>
                   <label
                     htmlFor="speaking-details"
