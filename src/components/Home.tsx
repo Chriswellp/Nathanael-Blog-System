@@ -503,6 +503,60 @@ export default function Home({ setActivePage, initialHero }: HomeProps) {
         </div>
       </section>
 
+{/* WHY SWAB SECTION */}
+<section
+  id="why-swab"
+  className="relative overflow-hidden bg-slate-950 py-16 sm:py-24"
+>
+  <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-amber-400/10 blur-3xl pointer-events-none" />
+  <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-4xl mx-auto text-center">
+
+      <span className="inline-block text-amber-400 text-xs sm:text-sm font-bold tracking-[0.25em] uppercase mb-5">
+        WHY SWAB?
+      </span>
+
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif text-white leading-tight mb-8">
+        Because Social Workers Should Not Navigate Change Alone
+      </h2>
+
+      <div className="w-20 h-1.5 bg-amber-400 rounded-full mx-auto mb-10" />
+
+      <div className="space-y-6 text-slate-300 text-base sm:text-lg leading-relaxed">
+        <p>
+          Every year, social workers transition into new roles, relocate to
+          different countries, adapt to unfamiliar legislation and encounter
+          new professional expectations. Many undertake these journeys with
+          limited support, guidance or professional networks.
+        </p>
+
+        <p className="text-white text-xl sm:text-2xl font-semibold font-serif">
+          SWAB exists to bridge that gap.
+        </p>
+
+        <p>
+          Through accessible learning, professional support, mentoring,
+          international collaboration and knowledge exchange, we help social
+          workers build confidence, strengthen competence and thrive within
+          their chosen practice environments.
+        </p>
+
+        <p>
+          By supporting practitioners, we ultimately contribute to better
+          outcomes for children, families and communities.
+        </p>
+      </div>
+
+      <div className="mt-12 flex justify-center">
+        <div className="h-1 w-24 rounded-full bg-amber-400/70" />
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
       {/* VALUES */}
       <section className="bg-[#f5f7fa] py-20 sm:py-24">

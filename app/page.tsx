@@ -373,19 +373,35 @@ export default function MainPage() {
 
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-swab-navy text-white border-t border-swab-gold/30 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-gray-400 space-y-2">
-          <p>
-            © {new Date().getFullYear()} Social Work Across Borders (SWAB).
-            All rights reserved.
-          </p>
 
-          <p className="text-swab-gold font-medium">
-            Supporting social work practice, transition, learning and development across borders.
-          </p>
-        </div>
-      </footer>
+{/* SWAB WEBSITE FOOTER */}
+<footer className="bg-slate-950 border-t border-amber-500/30">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+    <div className="text-center max-w-4xl mx-auto space-y-5">
+
+      <h2 className="text-xl sm:text-2xl font-bold font-serif tracking-wide text-white">
+        SOCIAL WORK ACROSS BORDERS (SWAB)
+      </h2>
+
+      <div className="w-16 h-1 bg-amber-400 rounded-full mx-auto" />
+
+      <p className="text-slate-300 text-sm sm:text-base leading-relaxed italic max-w-3xl mx-auto">
+        Empowering social workers through knowledge, preparation and support
+        to thrive across borders and improve outcomes for children and families.
+      </p>
+
+    </div>
+
+    <div className="border-t border-slate-800 mt-10 pt-6">
+      <p className="text-center text-slate-400 text-xs sm:text-sm">
+        © 2026 Social Work Across Borders (SWAB). All Rights Reserved.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
 
     </div>
   );
