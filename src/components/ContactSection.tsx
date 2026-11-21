@@ -17,6 +17,7 @@ const supportOptions = [
   'Professional Development Training', 'Wellbeing & Resilience Support', 'Employer / Local Authority Enquiry',
   'Speaking Engagement / Conference Invitation', 'University Lecture / Academic Engagement',
   'Research Collaboration', 'Other',
+  'Court Work Process', 'CLA Process',
 ];
 const destinationOptions = ['England', 'Wales', 'Scotland', 'Northern Ireland', 'Republic of Ireland', 'Australia', 'New Zealand', 'Canada', 'United States', 'Other'];
 
@@ -170,7 +171,7 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {registrationOpen && <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/70 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="registration-title">
+     {registrationOpen && <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/70 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="registration-title">
         <div className="flex max-h-[96vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl bg-slate-50 shadow-2xl sm:rounded-3xl">
           <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-slate-950 px-5 py-5 text-white sm:px-8"><div><p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-amber-400">SWAB • Registration & Support Request</p><h2 id="registration-title" className="mt-1 font-serif text-xl font-bold sm:text-2xl">Professional Support Registration</h2><p className="mt-1 text-xs text-slate-300">Complete the sections relevant to your circumstances. Required fields are marked *.</p></div><button type="button" aria-label="Close registration" onClick={() => setRegistrationOpen(false)} className="rounded-full border border-slate-700 px-3 py-1.5 text-xl leading-none text-slate-300 hover:bg-slate-800">×</button></div>
           <div className="overflow-y-auto px-5 py-6 sm:px-8">

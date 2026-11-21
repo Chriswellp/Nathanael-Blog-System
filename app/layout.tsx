@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Social Work Across Borders | Global Social Work & Transformation",
     description:
-      "Bridging communities, cross-border social work initiatives, and driving global social transformation worldwide.",
+      "Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children and families.",
     url: "https://www.socialworkeracrossborders.co.uk",
     siteName: "Social Work Across Borders",
     images: [
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Social Work Across Borders | Global Social Work & Transformation",
     description:
-      "Bridging communities, cross-border social work initiatives, and driving global social transformation worldwide.",
+      "Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children and families.",
     images: ["/og-image.png"],
   },
   verification: {
@@ -85,8 +85,8 @@ export default function RootLayout({
       name: "Nathanael Maradza",
     },
     description:
-      "Bridging communities, cross-border social work initiatives, and driving global social transformation worldwide.",
-  };
+      "Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children and families.",
+   };
 
   return (
     <html
