@@ -352,16 +352,16 @@ export default function Navbar({
             ))}
           </nav>
 
-          {/* Desktop Contact Button */}
-          <div className="hidden lg:flex items-center">
-            <button
-              type="button"
-              onClick={handleChatAction}
-              className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow-sm hover:shadow-amber-400/20 flex items-center gap-1.5 active:scale-95"
-            >
-              💬 Contact SWAB
-            </button>
-          </div>
+         {/* Desktop Contact Button */}
+<div className="hidden lg:flex items-center">
+  <button
+    type="button"
+    onClick={() => navigateTo('contact')}
+    className="bg-amber-400 hover:bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow-sm hover:shadow-amber-400/20 flex items-center gap-1.5 active:scale-95"
+  >
+    💬 Contact SWAB
+  </button>
+</div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex lg:hidden items-center">
@@ -468,16 +468,16 @@ export default function Navbar({
               ))}
             </nav>
 
-            {/* Mobile Contact Button */}
-            <div className="mt-4 border-t border-slate-800 pt-4">
-              <button
-                type="button"
-                onClick={handleChatAction}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 shadow-lg shadow-amber-950/20 transition hover:bg-amber-300 active:scale-[0.99]"
-              >
-                💬 Contact SWAB Support
-              </button>
-            </div>
+           {/* Mobile Contact Button */}
+<div className="mt-4 border-t border-slate-800 pt-4">
+  <button
+    type="button"
+    onClick={() => navigateTo('contact')}
+    className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 py-3 text-xs font-extrabold uppercase tracking-wider text-slate-950 shadow-lg shadow-amber-950/20 transition hover:bg-amber-300 active:scale-[0.99]"
+  >
+    💬 Contact SWAB Support
+  </button>
+</div>
           </div>
         )}
       </header>

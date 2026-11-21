@@ -20,10 +20,11 @@ export const metadata: Metadata = {
     template: "%s | Social Work Across Borders",
   },
   description:
-    "Official portal for Social Work Across Borders (SWAB). Bridging communities, cross-border social work initiatives, and driving global social transformation led by Nathanael Maradza.",
+    "Empowering social workers through knowledge, preparation and support to thrive across borders and improve outcomes for children and families.",
+    
   keywords: [
     "Social Work Across Borders",
-    "Social Worker Across Borders",
+    "Social Work Across Borders",
     "SWAB",
     "International Social Work",
     "Global Social Work",

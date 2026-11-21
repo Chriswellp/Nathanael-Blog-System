@@ -212,7 +212,7 @@ export default function LoginPageContent() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-950 text-white flex items-center justify-center p-4 sm:p-6 lg:p-10 overflow-hidden selection:bg-blue-400 selection:text-slate-950">
+    <div className="relative min-h-screen w-full bg-slate-950 text-white flex items-center justify-center p-4 sm:p-6 lg:p-10 overflow-hidden selection:bg-amber-400 selection:text-slate-950">
       
       {/* BACKGROUND SLIDESHOW */}
       {bgImages.map((img, idx) => (
@@ -226,11 +226,11 @@ export default function LoginPageContent() {
       ))}
 
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/60" />
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* MAIN CONTAINER */}
-      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-slate-900/70 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden">
+      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-slate-900/70 backdrop-blur-xl border border-amber-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden">
         
         {/* LEFT COLUMN: BRAND SHOWCASE & ADMIN STATUS REEL */}
         <div className="lg:col-span-7 space-y-6 lg:pr-6">
@@ -242,7 +242,7 @@ export default function LoginPageContent() {
                 aria-label="View status updates"
                 className="relative group cursor-pointer text-left focus:outline-none"
               >
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-400 via-white to-blue-600 animate-spin blur-sm opacity-80 group-hover:opacity-100 transition"></div>
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 via-white to-amber-600 animate-spin blur-sm opacity-80 group-hover:opacity-100 transition"></div>
                 <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-800">
                   <img 
                     src="/logo1.png" 
@@ -251,7 +251,7 @@ export default function LoginPageContent() {
                   />
                 </div>
                 {statuses.length > 0 && (
-                  <span className="absolute bottom-0 right-0 bg-blue-500 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter shadow">
+                  <span className="absolute bottom-0 right-0 bg-amber-500 text-slate-950 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter shadow">
                     Status
                   </span>
                 )}
@@ -261,7 +261,7 @@ export default function LoginPageContent() {
                 <h1 className="text-2xl sm:text-3xl font-bold font-serif text-white tracking-wide leading-tight">
                   Social Work Across Borders (SWAB)
                 </h1>
-                <p className="text-xs text-blue-400 font-sans tracking-widest uppercase font-semibold">
+                <p className="text-xs text-amber-400 font-sans tracking-widest uppercase font-semibold">
                   Learn • Share • Collaborate • Transform
                 </p>
               </div>
@@ -320,35 +320,35 @@ export default function LoginPageContent() {
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-3 gap-3 pt-2">
             <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
-              <span className="block text-lg sm:text-2xl font-bold text-blue-400 font-mono">15+</span>
+              <span className="block text-lg sm:text-2xl font-bold text-amber-400 font-mono">15+</span>
               <span className="text-[10px] sm:text-xs text-slate-400">International Reach</span>
             </div>
             <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
-              <span className="block text-lg sm:text-2xl font-bold text-blue-400 font-mono">50+</span>
+              <span className="block text-lg sm:text-2xl font-bold text-amber-400 font-mono">50+</span>
               <span className="text-[10px] sm:text-xs text-slate-400">Learning & Exchange</span>
             </div>
             <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
-              <span className="block text-lg sm:text-2xl font-bold text-blue-400 font-mono">100%</span>
+              <span className="block text-lg sm:text-2xl font-bold text-amber-400 font-mono">100%</span>
               <span className="text-[10px] sm:text-xs text-slate-400">Practice Focus</span>
             </div>
           </div>
         </div>
 
         {/* RIGHT COLUMN: LOGIN FORM */}
-        <div className="lg:col-span-5 w-full bg-slate-950/80 border border-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="lg:col-span-5 w-full bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-xl space-y-6 text-slate-900">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div>
-              <h2 className="text-lg font-bold font-serif text-white">
+              <h2 className="text-lg font-bold font-serif text-slate-950">
                 {showLoginForm ? 'SWAB Portal Access' : 'About SWAB'}
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {showLoginForm ? 'Sign in to access your SWAB account' : 'Learn more about Social Work Across Borders'}
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowLoginForm(!showLoginForm)}
-              className="text-xs text-blue-400 hover:underline font-semibold cursor-pointer"
+              className="text-xs text-amber-400 hover:underline font-semibold cursor-pointer"
             >
               {showLoginForm ? 'About SWAB →' : '← Sign In Form'}
             </button>
@@ -364,7 +364,7 @@ export default function LoginPageContent() {
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <label htmlFor="login-email" className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  <label htmlFor="login-email" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Email Address
                   </label>
                   <input
@@ -374,19 +374,19 @@ export default function LoginPageContent() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-slate-900 text-white placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-blue-400 transition"
+                    className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-amber-400 transition"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label htmlFor="login-password" className="block text-xs font-semibold text-slate-300">
+                    <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700">
                       Password
                     </label>
                     <button
                       type="button"
                       onClick={() => setShowForgotPasswordModal(true)}
-                      className="text-[11px] text-blue-400 hover:underline cursor-pointer font-medium"
+                      className="text-[11px] text-amber-400 hover:underline cursor-pointer font-medium"
                     >
                       Forgot password?
                     </button>
@@ -398,30 +398,30 @@ export default function LoginPageContent() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-900 text-white placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-blue-400 transition"
+                    className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-amber-400 transition"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-lg hover:shadow-blue-400/20 active:scale-[0.98]"
+                  className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-lg hover:shadow-amber-400/20 active:scale-[0.98]"
                 >
                   {loading ? 'Authenticating...' : 'Sign In to Portal'}
                 </button>
               </form>
 
-              <div className="pt-2 text-center text-xs text-slate-400">
+              <div className="pt-2 text-center text-xs text-slate-500">
                 Don&apos;t have an account?{' '}
-                <Link href="/signup" className="text-blue-400 font-semibold hover:underline">
+                <Link href="/signup" className="text-amber-700 font-semibold hover:underline">
                   Sign up here
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="space-y-4 animate-in fade-in duration-200 text-xs text-slate-300 leading-relaxed">
+            <div className="space-y-4 animate-in fade-in duration-200 text-xs text-slate-600 leading-relaxed">
               <p>
-                <strong className="text-blue-400 font-semibold">Social Work Across Borders (SWAB)</strong> is an international platform committed to developing knowledgeable, confident and effective social work practitioners through professional development, international workforce support, knowledge exchange and practice excellence.
+                <strong className="text-amber-700 font-semibold">Social Work Across Borders (SWAB)</strong> is an international platform committed to developing knowledgeable, confident and effective social work practitioners through professional development, international workforce support, knowledge exchange and practice excellence.
               </p>
               <div className="pt-2">
                 <button
@@ -444,7 +444,7 @@ export default function LoginPageContent() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative w-full max-w-md bg-slate-900 border border-blue-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+          <div className="relative w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
             <button
               type="button"
               onClick={() => {
@@ -480,7 +480,7 @@ export default function LoginPageContent() {
 
             <form onSubmit={handleVerifyEmail} className="space-y-4">
               <div>
-                <label htmlFor="verify-email" className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label htmlFor="verify-email" className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Registered Email Address *
                 </label>
                 <input
@@ -490,7 +490,7 @@ export default function LoginPageContent() {
                   value={resetEmailInput}
                   onChange={(e) => setResetEmailInput(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full bg-slate-950 text-white placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-blue-400 transition"
+                  className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-amber-400 transition"
                 />
               </div>
 
@@ -510,7 +510,7 @@ export default function LoginPageContent() {
                 <button
                   type="submit"
                   disabled={verifyLoading}
-                  className="w-1/2 bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition disabled:opacity-50 cursor-pointer shadow"
+                  className="w-1/2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition disabled:opacity-50 cursor-pointer shadow"
                 >
                   {verifyLoading ? 'Checking...' : 'Next'}
                 </button>
@@ -527,11 +527,11 @@ export default function LoginPageContent() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative w-full max-w-md bg-slate-900 border border-blue-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+          <div className="relative w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
             <div className="space-y-1">
               <h3 className="text-xl font-bold font-serif text-white">Create New Password</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Enter and confirm a new secure password {verifiedEmailForReset && <>for <strong className="text-blue-400">{verifiedEmailForReset}</strong></>}.
+                Enter and confirm a new secure password {verifiedEmailForReset && <>for <strong className="text-amber-400">{verifiedEmailForReset}</strong></>}.
               </p>
             </div>
 
@@ -549,7 +549,7 @@ export default function LoginPageContent() {
 
             <form onSubmit={handleDirectPasswordUpdate} className="space-y-4">
               <div>
-                <label htmlFor="new-pass" className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label htmlFor="new-pass" className="block text-xs font-semibold text-slate-700 mb-1.5">
                   New Password *
                 </label>
                 <input
@@ -559,12 +559,12 @@ export default function LoginPageContent() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="w-full bg-slate-950 text-white placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-blue-400 transition"
+                  className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-amber-400 transition"
                 />
               </div>
 
               <div>
-                <label htmlFor="confirm-pass" className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label htmlFor="confirm-pass" className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Confirm Password *
                 </label>
                 <input
@@ -574,7 +574,7 @@ export default function LoginPageContent() {
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   placeholder="Re-enter new password"
-                  className="w-full bg-slate-950 text-white placeholder-slate-500 border border-slate-800 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-blue-400 transition"
+                  className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-amber-400 transition"
                 />
               </div>
 
@@ -595,7 +595,7 @@ export default function LoginPageContent() {
                 <button
                   type="submit"
                   disabled={updateLoading}
-                  className="w-1/2 bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition disabled:opacity-50 cursor-pointer shadow-lg"
+                  className="w-1/2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition disabled:opacity-50 cursor-pointer shadow-lg"
                 >
                   {updateLoading ? 'Saving...' : 'Reset Password'}
                 </button>
@@ -621,7 +621,7 @@ export default function LoginPageContent() {
             ✕
           </button>
 
-          <div className="relative w-full max-w-md bg-black rounded-2xl overflow-hidden border border-blue-500/30 shadow-2xl flex flex-col h-[80vh]">
+          <div className="relative w-full max-w-md bg-black rounded-2xl overflow-hidden border border-amber-500/30 shadow-2xl flex flex-col h-[80vh]">
             {statuses[activeStatusIndex].media_type === 'video' ? (
               <video
                 ref={videoRef}

@@ -16,8 +16,8 @@ const supportOptions = [
   'Reflective Practice Coaching', 'Assessment writing & Analysis Support', 'Leadership Development',
   'Professional Development Training', 'Wellbeing & Resilience Support', 'Employer / Local Authority Enquiry',
   'Speaking Engagement / Conference Invitation', 'University Lecture / Academic Engagement',
-  'Research Collaboration', 'Other',
-  'Court Work Process', 'CLA Process',
+  'Research Collaboration', 'CLA Process',
+  'Court Work Process', 'Other',
 ];
 const destinationOptions = ['England', 'Wales', 'Scotland', 'Northern Ireland', 'Republic of Ireland', 'Australia', 'New Zealand', 'Canada', 'United States', 'Other'];
 
