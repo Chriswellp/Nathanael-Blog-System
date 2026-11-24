@@ -186,6 +186,10 @@ export default function AdminDashboard({ setActivePage }: AdminDashboardProps) {
   const [isLoadingRegistrations, setIsLoadingRegistrations] = useState<boolean>(false);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
   const [registrationSearch, setRegistrationSearch] = useState('');
+  const [registrationDateFrom, setRegistrationDateFrom] = useState('');
+  const [registrationDateTo, setRegistrationDateTo] = useState('');
+  const [registrationQuestion, setRegistrationQuestion] = useState('');
+  const [registrationAnswer, setRegistrationAnswer] = useState('');
   const [selectedRegistration, setSelectedRegistration] = useState<SwabRegistration | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -422,7 +426,48 @@ setPublications((prev) => {
   };
 
   const registrationSummaries = buildRegistrationSummaries(registrations);
+
+  // Build question and answer choices from the actual answers stored in registration_data.
+  const registrationQuestionOptions = Array.from(
+    new Set(registrations.flatMap((record) =>
+      getRegistrationAnswerEntries(record).map(([key]) => key)
+    ))
+  ).sort((a, b) => formatRegistrationLabel(a).localeCompare(formatRegistrationLabel(b)));
+
+  const registrationAnswerOptions = registrationQuestion
+    ? Array.from(new Set(registrations.flatMap((record) => {
+        const answer = flattenRegistrationData(record.registration_data || {})[registrationQuestion];
+        if (answer === null || answer === undefined || answer === '') return [];
+        return (Array.isArray(answer) ? answer : [answer])
+          .filter((value) => value !== null && value !== undefined && value !== '')
+          .map((value) => formatRegistrationValue(value));
+      }))).sort((a, b) => a.localeCompare(b))
+    : [];
+
   const filteredRegistrations = registrations.filter((record) => {
+    const submittedDate = record.created_at
+      ? (() => {
+          const date = new Date(record.created_at);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        })()
+      : '';
+    if (registrationDateFrom && (!submittedDate || submittedDate < registrationDateFrom)) return false;
+    if (registrationDateTo && (!submittedDate || submittedDate > registrationDateTo)) return false;
+
+    if (registrationQuestion && registrationAnswer) {
+      const answers = flattenRegistrationData(record.registration_data || {});
+      const rawAnswer = answers[registrationQuestion];
+      const answerValues = Array.isArray(rawAnswer) ? rawAnswer : [rawAnswer];
+      const matchesAnswer = answerValues.some((value) =>
+        value !== null && value !== undefined &&
+        formatRegistrationValue(value).toLocaleLowerCase() === registrationAnswer.toLocaleLowerCase()
+      );
+      if (!matchesAnswer) return false;
+    }
+
     if (!registrationSearch.trim()) return true;
     const searchableText = [
       record.first_name,
@@ -433,6 +478,65 @@ setPublications((prev) => {
     ].join(' ').toLowerCase();
     return searchableText.includes(registrationSearch.toLowerCase());
   });
+
+  const resetRegistrationQuery = () => {
+    setRegistrationSearch('');
+    setRegistrationDateFrom('');
+    setRegistrationDateTo('');
+    setRegistrationQuestion('');
+    setRegistrationAnswer('');
+  };
+
+  const downloadRegistrationQuery = () => {
+    if (!filteredRegistrations.length) {
+      showNotification('There are no matching applicants to download.');
+      return;
+    }
+
+    const allAnswerKeys = Array.from(new Set(
+      filteredRegistrations.flatMap((record) =>
+        getRegistrationAnswerEntries(record).map(([key]) => key)
+      )
+    )).sort();
+
+    const headers = [
+      'Applicant name',
+      'Email address',
+      'WhatsApp number',
+      'Date submitted',
+      ...allAnswerKeys.map(formatRegistrationLabel),
+    ];
+
+    const safeCsvCell = (value: any) => {
+      let textValue = value === null || value === undefined ? '' : formatRegistrationValue(value);
+      // Prevent spreadsheet formula execution when a CSV is opened in Excel.
+      if (/^[=+@\-\t\r]/.test(textValue)) textValue = `'${textValue}`;
+      return `"${textValue.replace(/"/g, '""')}"`;
+    };
+
+    const rows = filteredRegistrations.map((record) => {
+      const answers = flattenRegistrationData(record.registration_data || {});
+      return [
+        getRegistrationName(record),
+        record.email || '',
+        record.whatsapp_number || '',
+        record.created_at ? new Date(record.created_at).toLocaleString() : '',
+        ...allAnswerKeys.map((key) => answers[key] === undefined ? '' : answers[key]),
+      ];
+    });
+
+    const csv = [headers, ...rows].map((row) => row.map(safeCsvCell).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `SWAB-registration-query-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showNotification(`${filteredRegistrations.length} matching applicant record(s) downloaded.`);
+  };
 
   const fetchAllData = async () => {
     setIsLoading(true);
@@ -1510,6 +1614,88 @@ const handleDeleteHomeCard = async (id: string) => {
               </div>
             </div>
 
+            {/* REGISTRATION QUERY BUILDER */}
+            <section className="bg-slate-950 border border-amber-500/20 rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Advanced search</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-white mt-1">Registration Query & Export</h3>
+                  <p className="text-xs text-slate-400 mt-1">Combine submission dates and applicant answers to build a focused list.</p>
+                </div>
+                <div className="rounded-xl bg-slate-900 border border-slate-800 px-4 py-3 min-w-[130px]">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500">Matching applicants</p>
+                  <p className="text-2xl font-bold text-amber-400 mt-1">{filteredRegistrations.length}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Registration from</label>
+                  <input
+                    type="date"
+                    value={registrationDateFrom}
+                    max={registrationDateTo || undefined}
+                    onChange={(e) => setRegistrationDateFrom(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 [color-scheme:dark]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Registration to</label>
+                  <input
+                    type="date"
+                    value={registrationDateTo}
+                    min={registrationDateFrom || undefined}
+                    onChange={(e) => setRegistrationDateTo(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 [color-scheme:dark]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Registration question</label>
+                  <select
+                    value={registrationQuestion}
+                    onChange={(e) => { setRegistrationQuestion(e.target.value); setRegistrationAnswer(''); }}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="">Choose a question</option>
+                    {registrationQuestionOptions.map((question) => (
+                      <option key={question} value={question}>{formatRegistrationLabel(question)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Applicant's answer</label>
+                  <select
+                    value={registrationAnswer}
+                    onChange={(e) => setRegistrationAnswer(e.target.value)}
+                    disabled={!registrationQuestion}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 disabled:opacity-40"
+                  >
+                    <option value="">All answers</option>
+                    {registrationAnswerOptions.map((answer) => (
+                      <option key={answer} value={answer}>{answer}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-800">
+                <p className="text-[11px] text-slate-500">The question filter uses the answers actually submitted in the registration form. Leave a filter blank to include all values for that field.</p>
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={resetRegistrationQuery}
+                    className="px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition"
+                  >Clear filters</button>
+                  <button
+                    type="button"
+                    onClick={downloadRegistrationQuery}
+                    disabled={!filteredRegistrations.length}
+                    className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 text-xs font-bold transition flex items-center gap-2"
+                  ><span>↓</span> Download CSV</button>
+                </div>
+              </div>
+            </section>
+
             <section className="space-y-3">
               <div className="flex items-end justify-between gap-3">
                 <div>
@@ -1600,7 +1786,6 @@ const handleDeleteHomeCard = async (id: string) => {
                         <tr key={record.id} className="hover:bg-slate-900/60 transition">
                           <td className="px-5 py-4">
                             <p className="text-sm font-semibold text-white">{getRegistrationName(record)}</p>
-                            <p className="text-[10px] text-slate-500 mt-1 font-mono">ID: {record.id}</p>
                           </td>
                           <td className="px-5 py-4 text-sm text-slate-300">{getRegistrationEmail(record)}</td>
                           <td className="px-5 py-4 text-xs text-slate-400">
@@ -2841,10 +3026,9 @@ const handleDeleteHomeCard = async (id: string) => {
                   ))}
               </div>
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Submission reference</p>
-                <p className="text-xs text-slate-300 font-mono mt-1 break-all">{selectedRegistration.id}</p>
-                <p className="text-[10px] text-slate-500 mt-3">
-                  Submitted: {selectedRegistration.created_at ? new Date(selectedRegistration.created_at).toLocaleString() : 'Date not recorded'}
+                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Registration date</p>
+                <p className="text-sm text-slate-200 mt-1">
+                  {selectedRegistration.created_at ? new Date(selectedRegistration.created_at).toLocaleString() : 'Date not recorded'}
                 </p>
               </div>
             </div>
