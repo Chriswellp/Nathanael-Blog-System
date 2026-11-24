@@ -72,12 +72,19 @@ interface HomePillarCard {
 
 interface SwabRegistration {
   id: string;
+  first_name: string;
+  surname: string;
+  email: string;
+  whatsapp_number?: string | null;
+  registration_data: Record<string, any>;
+  email_status?: string | null;
+  email_error?: string | null;
   created_at?: string;
-  [key: string]: any;
 }
 
 const formatRegistrationLabel = (value: string) =>
   value
+    .replace(/\./g, ' · ')
     .replace(/[_-]+/g, ' ')
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -89,60 +96,70 @@ const formatRegistrationValue = (value: any): string => {
   return String(value);
 };
 
-const getRegistrationName = (record: SwabRegistration): string => {
-  const keys = ['full_name', 'fullName', 'name', 'applicant_name', 'applicantName', 'first_name'];
-  for (const key of keys) {
-    if (record[key]) {
-      if (key === 'first_name' && record.last_name) return `${record[key]} ${record.last_name}`;
-      return String(record[key]);
-    }
+const getRegistrationName = (record: SwabRegistration): string =>
+  [record.first_name, record.surname].filter(Boolean).join(' ') || 'Unnamed applicant';
+
+const getRegistrationEmail = (record: SwabRegistration): string =>
+  record.email || '—';
+
+const flattenRegistrationData = (value: any, prefix = ''): Record<string, any> => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return prefix ? { [prefix]: value } : {};
   }
-  return 'Unnamed applicant';
+
+  return Object.entries(value).reduce((result, [key, child]) => {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (child && typeof child === 'object' && !Array.isArray(child)) {
+      Object.assign(result, flattenRegistrationData(child, path));
+    } else {
+      result[path] = child;
+    }
+    return result;
+  }, {} as Record<string, any>);
 };
 
-const getRegistrationEmail = (record: SwabRegistration): string => {
-  const keys = ['email', 'email_address', 'emailAddress', 'applicant_email'];
-  for (const key of keys) if (record[key]) return String(record[key]);
-  return '—';
+const getRegistrationAnswerEntries = (record: SwabRegistration) => {
+  const answers = flattenRegistrationData(record.registration_data || {});
+  return Object.entries(answers).filter(([, value]) =>
+    value !== null && value !== undefined && value !== ''
+  );
 };
 
 const buildRegistrationSummaries = (records: SwabRegistration[]) => {
-  if (!records.length) return [];
+  const choiceFields = [
+    'personalDetails.gender',
+    'personalDetails.maritalStatus',
+    'professionalInformation.yearsExperience',
+    'professionalRegistration.registered',
+    'professionalRegistration.registrationStatus',
+    'internationalCareer.destinations',
+    'supportRequired',
+    'serviceRequirements.sessions',
+    'consent.communications',
+    'consent.privacy',
+  ];
 
-  const excludedField = /((^|_)id$|uuid|email|name|phone|mobile|address|created|updated|date|time|message|comment|description|motivation|reason|statement|experience|qualification|institution|organisation|organization|website|url|file|document|reference|notes)/i;
-  const keys = Array.from(new Set(records.flatMap((record) => Object.keys(record))));
-  const summaries: { field: string; options: { label: string; count: number }[] }[] = [];
-
-  keys.forEach((key) => {
-    if (excludedField.test(key)) return;
+  return choiceFields.map((field) => {
     const counts = new Map<string, number>();
-
     records.forEach((record) => {
-      const raw = record[key];
+      const answers = flattenRegistrationData(record.registration_data || {});
+      const raw = answers[field];
       if (raw === null || raw === undefined || raw === '') return;
       const values = Array.isArray(raw) ? raw : [raw];
-
       values.forEach((value) => {
         if (value === null || value === undefined || value === '') return;
-        if (typeof value === 'object') return;
         const label = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value).trim();
-        if (!label || label.length > 80 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(label)) return;
-        counts.set(label, (counts.get(label) || 0) + 1);
+        if (label) counts.set(label, (counts.get(label) || 0) + 1);
       });
     });
 
-    // Keep only fields that behave like survey choices, not long free-text answers.
-    if (counts.size > 0 && counts.size <= 12) {
-      summaries.push({
-        field: formatRegistrationLabel(key),
-        options: Array.from(counts.entries())
-          .map(([label, count]) => ({ label, count }))
-          .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
-      });
-    }
-  });
-
-  return summaries;
+    return {
+      field: formatRegistrationLabel(field),
+      options: Array.from(counts.entries())
+        .map(([label, count]) => ({ label, count }))
+        .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
+    };
+  }).filter((summary) => summary.options.length > 0);
 };
 
 interface AdminDashboardProps {
@@ -375,18 +392,30 @@ setPublications((prev) => {
     setIsLoadingRegistrations(true);
     setRegistrationError(null);
     try {
-      const { data, error } = await supabase
-        .from('swab_registrations' as any)
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!session?.access_token) throw new Error('Your admin session has expired. Please sign in again.');
 
-      if (error) throw error;
-      setRegistrations(Array.isArray(data) ? (data as SwabRegistration[]) : []);
+      const response = await fetch(`/api/admin/swab-registrations?t=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Cache-Control': 'no-cache',
+        },
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result?.error || `Could not load registrations (HTTP ${response.status}).`);
+      }
+
+      const rows = Array.isArray(result) ? result : result?.data;
+      if (!Array.isArray(rows)) throw new Error('The registrations API returned an unexpected response.');
+      setRegistrations(rows as SwabRegistration[]);
     } catch (error: any) {
       console.error('Error fetching SWAB registrations:', error);
-      setRegistrationError(
-        error?.message || 'Could not load registrations. Check the table permissions and Supabase access policies.'
-      );
+      setRegistrationError(error?.message || 'Could not load registrations.');
     } finally {
       setIsLoadingRegistrations(false);
     }
@@ -395,10 +424,13 @@ setPublications((prev) => {
   const registrationSummaries = buildRegistrationSummaries(registrations);
   const filteredRegistrations = registrations.filter((record) => {
     if (!registrationSearch.trim()) return true;
-    const searchableText = Object.values(record)
-      .map((value) => formatRegistrationValue(value))
-      .join(' ')
-      .toLowerCase();
+    const searchableText = [
+      record.first_name,
+      record.surname,
+      record.email,
+      record.whatsapp_number,
+      ...getRegistrationAnswerEntries(record).map(([key, value]) => `${key} ${formatRegistrationValue(value)}`),
+    ].join(' ').toLowerCase();
     return searchableText.includes(registrationSearch.toLowerCase());
   });
 
@@ -2793,9 +2825,13 @@ const handleDeleteHomeCard = async (id: string) => {
             </div>
             <div className="p-5 sm:p-6 overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {Object.entries(selectedRegistration)
-                  .filter(([key]) => !['id', 'created_at', 'updated_at'].includes(key))
-                  .map(([key, value]) => (
+                {[
+                  ['Applicant name', getRegistrationName(selectedRegistration)],
+                  ['Email', selectedRegistration.email],
+                  ['WhatsApp number', selectedRegistration.whatsapp_number || '—'],
+                  ['Email delivery status', selectedRegistration.email_status || '—'],
+                  ...getRegistrationAnswerEntries(selectedRegistration),
+                ].map(([key, value]) => (
                     <div key={key} className="rounded-xl bg-slate-900/80 border border-slate-800 p-4 min-w-0">
                       <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">{formatRegistrationLabel(key)}</p>
                       <p className="text-sm text-slate-200 whitespace-pre-wrap break-words">
