@@ -69,13 +69,89 @@ interface HomePillarCard {
   is_visible?: boolean;
 }
 
+
+interface SwabRegistration {
+  id: string;
+  created_at?: string;
+  [key: string]: any;
+}
+
+const formatRegistrationLabel = (value: string) =>
+  value
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const formatRegistrationValue = (value: any): string => {
+  if (value === null || value === undefined || value === '') return '—';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (Array.isArray(value)) return value.map((item) => formatRegistrationValue(item)).join(', ');
+  if (typeof value === 'object') return JSON.stringify(value, null, 2);
+  return String(value);
+};
+
+const getRegistrationName = (record: SwabRegistration): string => {
+  const keys = ['full_name', 'fullName', 'name', 'applicant_name', 'applicantName', 'first_name'];
+  for (const key of keys) {
+    if (record[key]) {
+      if (key === 'first_name' && record.last_name) return `${record[key]} ${record.last_name}`;
+      return String(record[key]);
+    }
+  }
+  return 'Unnamed applicant';
+};
+
+const getRegistrationEmail = (record: SwabRegistration): string => {
+  const keys = ['email', 'email_address', 'emailAddress', 'applicant_email'];
+  for (const key of keys) if (record[key]) return String(record[key]);
+  return '—';
+};
+
+const buildRegistrationSummaries = (records: SwabRegistration[]) => {
+  if (!records.length) return [];
+
+  const excludedField = /((^|_)id$|uuid|email|name|phone|mobile|address|created|updated|date|time|message|comment|description|motivation|reason|statement|experience|qualification|institution|organisation|organization|website|url|file|document|reference|notes)/i;
+  const keys = Array.from(new Set(records.flatMap((record) => Object.keys(record))));
+  const summaries: { field: string; options: { label: string; count: number }[] }[] = [];
+
+  keys.forEach((key) => {
+    if (excludedField.test(key)) return;
+    const counts = new Map<string, number>();
+
+    records.forEach((record) => {
+      const raw = record[key];
+      if (raw === null || raw === undefined || raw === '') return;
+      const values = Array.isArray(raw) ? raw : [raw];
+
+      values.forEach((value) => {
+        if (value === null || value === undefined || value === '') return;
+        if (typeof value === 'object') return;
+        const label = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value).trim();
+        if (!label || label.length > 80 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(label)) return;
+        counts.set(label, (counts.get(label) || 0) + 1);
+      });
+    });
+
+    // Keep only fields that behave like survey choices, not long free-text answers.
+    if (counts.size > 0 && counts.size <= 12) {
+      summaries.push({
+        field: formatRegistrationLabel(key),
+        options: Array.from(counts.entries())
+          .map(([label, count]) => ({ label, count }))
+          .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
+      });
+    }
+  });
+
+  return summaries;
+};
+
 interface AdminDashboardProps {
   setActivePage?: (page: string) => void;
 }
 
 export default function AdminDashboard({ setActivePage }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'home' | 'publications' | 'blogs' | 'resources' | 'bookings' | 'comments' | 'streams' | 'chats'
+    'overview' | 'registrations' | 'home' | 'publications' | 'blogs' | 'resources' | 'bookings' | 'comments' | 'streams' | 'chats'
   >('overview');
 
   const [activeCallUrl, setActiveCallUrl] = useState<string | null>(null);
@@ -89,6 +165,11 @@ export default function AdminDashboard({ setActivePage }: AdminDashboardProps) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [streams, setStreams] = useState<LiveStream[]>([]);
+  const [registrations, setRegistrations] = useState<SwabRegistration[]>([]);
+  const [isLoadingRegistrations, setIsLoadingRegistrations] = useState<boolean>(false);
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
+  const [registrationSearch, setRegistrationSearch] = useState('');
+  const [selectedRegistration, setSelectedRegistration] = useState<SwabRegistration | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // --- HOME PAGE EDITOR STATES ---
@@ -290,11 +371,43 @@ setPublications((prev) => {
     }
   };
 
+  const fetchSwabRegistrations = async () => {
+    setIsLoadingRegistrations(true);
+    setRegistrationError(null);
+    try {
+      const { data, error } = await supabase
+        .from('swab_registrations' as any)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setRegistrations(Array.isArray(data) ? (data as SwabRegistration[]) : []);
+    } catch (error: any) {
+      console.error('Error fetching SWAB registrations:', error);
+      setRegistrationError(
+        error?.message || 'Could not load registrations. Check the table permissions and Supabase access policies.'
+      );
+    } finally {
+      setIsLoadingRegistrations(false);
+    }
+  };
+
+  const registrationSummaries = buildRegistrationSummaries(registrations);
+  const filteredRegistrations = registrations.filter((record) => {
+    if (!registrationSearch.trim()) return true;
+    const searchableText = Object.values(record)
+      .map((value) => formatRegistrationValue(value))
+      .join(' ')
+      .toLowerCase();
+    return searchableText.includes(registrationSearch.toLowerCase());
+  });
+
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
       await fetchPublications();
       await fetchHomeContent();
+      await fetchSwabRegistrations();
 
       const [blogsRes, resourcesRes, bookingsRes, commentsRes, streamsRes, chatUsersRes] = await Promise.all([
         fetch('/api/blogs?includeHidden=true', { cache: 'no-store' }),
@@ -1201,6 +1314,7 @@ const handleDeleteHomeCard = async (id: string) => {
         <nav className="flex border-b border-slate-800 gap-2 pb-2 overflow-x-auto">
           {[
             { id: 'overview', label: '📊 Overview' },
+            { id: 'registrations', label: `🧾 SWAB Registrations (${registrations.length})` },
             { id: 'home', label: '🏠 Home Page Editor' },
             { id: 'publications', label: `📚 Publications (${publications.length})` },
             { id: 'chats', label: `💬 Live Support (${chatUsers.length})` },
@@ -1227,7 +1341,7 @@ const handleDeleteHomeCard = async (id: string) => {
         {/* TAB 0: OVERVIEW METRICS */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
                 <div>
                   <p className="text-xs text-slate-400 font-mono uppercase">Publications</p>
@@ -1267,6 +1381,19 @@ const handleDeleteHomeCard = async (id: string) => {
                 </div>
                 <span className="text-2xl bg-slate-900 p-3 rounded-xl border border-slate-800">📅</span>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('registrations')}
+                className="text-left bg-slate-950 p-5 rounded-2xl border border-amber-500/30 hover:border-amber-400 transition flex items-center justify-between"
+              >
+                <div>
+                  <p className="text-xs text-slate-400 font-mono uppercase">SWAB Registrations</p>
+                  <p className="text-3xl font-bold text-amber-400 mt-1">{registrations.length}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">View applicant responses</p>
+                </div>
+                <span className="text-2xl bg-slate-900 p-3 rounded-xl border border-slate-800">🧾</span>
+              </button>
             </div>
 
             {/* Quick Actions Panel */}
@@ -1299,6 +1426,170 @@ const handleDeleteHomeCard = async (id: string) => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* TAB: SWAB PROFESSIONAL REGISTRATIONS */}
+        {activeTab === 'registrations' && (
+          <div className="space-y-6">
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 sm:p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-amber-400">Professional Registration</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">SWAB Registration Responses</h2>
+                  <p className="text-sm text-slate-400 mt-1">Applicant records and response summaries retrieved from Supabase.</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="search"
+                    value={registrationSearch}
+                    onChange={(e) => setRegistrationSearch(e.target.value)}
+                    placeholder="Search applicants or answers..."
+                    className="w-full sm:w-72 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchSwabRegistrations}
+                    disabled={isLoadingRegistrations}
+                    className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-950 text-sm font-bold transition"
+                  >
+                    {isLoadingRegistrations ? 'Refreshing...' : '↻ Refresh'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+                <div className="rounded-xl bg-slate-900 border border-slate-800 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Total submissions</p>
+                  <p className="text-2xl font-bold text-white mt-1">{registrations.length}</p>
+                </div>
+                <div className="rounded-xl bg-slate-900 border border-slate-800 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Showing results</p>
+                  <p className="text-2xl font-bold text-white mt-1">{filteredRegistrations.length}</p>
+                </div>
+                <div className="rounded-xl bg-slate-900 border border-slate-800 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Latest submission</p>
+                  <p className="text-sm font-semibold text-white mt-2">
+                    {registrations[0]?.created_at
+                      ? new Date(registrations[0].created_at).toLocaleString()
+                      : 'No submissions yet'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <section className="space-y-3">
+              <div className="flex items-end justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Response summary</h3>
+                  <p className="text-xs text-slate-400 mt-1">Counts for fields with selectable or repeated answers. Multiple selections are counted individually.</p>
+                </div>
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider">Live database totals</span>
+              </div>
+
+              {isLoadingRegistrations ? (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center text-sm text-slate-400">Loading response summaries...</div>
+              ) : registrationSummaries.length === 0 ? (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-6 text-sm text-slate-400">
+                  {registrations.length
+                    ? 'No clear multiple-choice fields were detected for summary. Individual answers remain available in each applicant record.'
+                    : 'Response summaries will appear here when registrations are available.'}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {registrationSummaries.map((summary) => {
+                    const totalAnswers = summary.options.reduce((sum, option) => sum + option.count, 0);
+                    return (
+                      <div key={summary.field} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+                        <div className="flex justify-between items-start gap-3">
+                          <h4 className="text-sm font-bold text-white">{summary.field}</h4>
+                          <span className="shrink-0 text-[10px] text-slate-400 bg-slate-900 border border-slate-800 rounded-full px-2.5 py-1">
+                            {totalAnswers} responses
+                          </span>
+                        </div>
+                        <div className="space-y-3">
+                          {summary.options.map((option) => {
+                            const percentage = totalAnswers ? Math.round((option.count / totalAnswers) * 100) : 0;
+                            return (
+                              <div key={option.label} className="space-y-1.5">
+                                <div className="flex items-center justify-between gap-3 text-xs">
+                                  <span className="text-slate-300 break-words">{option.label}</span>
+                                  <span className="text-slate-400 font-mono shrink-0">{option.count} · {percentage}%</span>
+                                </div>
+                                <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                                  <div className="h-full rounded-full bg-amber-400" style={{ width: `${percentage}%` }} />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            <section className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Applicant records</h3>
+                  <p className="text-xs text-slate-400 mt-1">Select “View details” to see every answer submitted by an applicant.</p>
+                </div>
+                <span className="text-xs text-slate-500">{filteredRegistrations.length} record(s)</span>
+              </div>
+
+              {registrationError ? (
+                <div className="p-6">
+                  <p className="text-sm font-semibold text-rose-400">Unable to load registrations</p>
+                  <p className="text-xs text-slate-400 mt-2">{registrationError}</p>
+                  <p className="text-xs text-slate-500 mt-2">Confirm that the authenticated admin account has SELECT permission on the public.swab_registrations table through Supabase RLS.</p>
+                  <button onClick={fetchSwabRegistrations} className="mt-4 text-xs font-bold text-amber-400 hover:text-amber-300">Try again</button>
+                </div>
+              ) : isLoadingRegistrations ? (
+                <div className="p-8 text-center text-sm text-slate-400">Loading applicant records...</div>
+              ) : filteredRegistrations.length === 0 ? (
+                <div className="p-8 text-center text-sm text-slate-400">
+                  {registrations.length ? 'No registrations match your search.' : 'No professional registrations have been submitted yet.'}
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left">
+                    <thead className="bg-slate-900/80">
+                      <tr className="text-[10px] uppercase tracking-wider text-slate-400">
+                        <th className="px-5 py-4 font-semibold">Applicant</th>
+                        <th className="px-5 py-4 font-semibold">Email address</th>
+                        <th className="px-5 py-4 font-semibold">Submitted</th>
+                        <th className="px-5 py-4 font-semibold text-right">Record</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {filteredRegistrations.map((record) => (
+                        <tr key={record.id} className="hover:bg-slate-900/60 transition">
+                          <td className="px-5 py-4">
+                            <p className="text-sm font-semibold text-white">{getRegistrationName(record)}</p>
+                            <p className="text-[10px] text-slate-500 mt-1 font-mono">ID: {record.id}</p>
+                          </td>
+                          <td className="px-5 py-4 text-sm text-slate-300">{getRegistrationEmail(record)}</td>
+                          <td className="px-5 py-4 text-xs text-slate-400">
+                            {record.created_at ? new Date(record.created_at).toLocaleString() : 'Date not recorded'}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRegistration(record)}
+                              className="px-3 py-2 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs font-bold transition"
+                            >
+                              View details →
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
           </div>
         )}
 
@@ -2479,6 +2770,55 @@ const handleDeleteHomeCard = async (id: string) => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* SWAB REGISTRATION DETAIL MODAL */}
+      {selectedRegistration && (
+        <div className="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+          <div className="bg-slate-950 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-5 sm:p-6 border-b border-slate-800 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-amber-400 font-bold">SWAB Professional Registration</p>
+                <h3 className="text-xl font-bold text-white mt-1">{getRegistrationName(selectedRegistration)}</h3>
+                <p className="text-xs text-slate-400 mt-1">{getRegistrationEmail(selectedRegistration)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRegistration(null)}
+                aria-label="Close registration details"
+                className="text-slate-400 hover:text-white text-xl px-2"
+              >✕</button>
+            </div>
+            <div className="p-5 sm:p-6 overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {Object.entries(selectedRegistration)
+                  .filter(([key]) => !['id', 'created_at', 'updated_at'].includes(key))
+                  .map(([key, value]) => (
+                    <div key={key} className="rounded-xl bg-slate-900/80 border border-slate-800 p-4 min-w-0">
+                      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2">{formatRegistrationLabel(key)}</p>
+                      <p className="text-sm text-slate-200 whitespace-pre-wrap break-words">
+                        {formatRegistrationValue(value)}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+              <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Submission reference</p>
+                <p className="text-xs text-slate-300 font-mono mt-1 break-all">{selectedRegistration.id}</p>
+                <p className="text-[10px] text-slate-500 mt-3">
+                  Submitted: {selectedRegistration.created_at ? new Date(selectedRegistration.created_at).toLocaleString() : 'Date not recorded'}
+                </p>
+              </div>
+            </div>
+            <div className="p-4 border-t border-slate-800 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedRegistration(null)}
+                className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold"
+              >Close details</button>
+            </div>
           </div>
         </div>
       )}
